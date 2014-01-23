@@ -1,0 +1,97 @@
+<html>
+  <head>
+    <title>Tasks Todo</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="$request.contextPath/resources/css/normalize.css"/>
+    <link rel="stylesheet" href="$request.contextPath/resources/css/main.css"/>
+    <link rel="stylesheet" href="$request.contextPath/resources/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="$request.contextPath/resources/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="$request.contextPath/resources/css/style.css"/>
+    <script src="$request.contextPath/resources/js/jquery-1.10.2.min.js"></script>        
+    <script src="$request.contextPath/resources/js/modernizr-2.6.2.min.js"></script>
+    <script src="$request.contextPath/resources/js/bootstrap.js"></script>
+    <script src="$request.contextPath/resources/js/tasks.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="$request.contextPath/">Tasks Todo</a>
+      </div>
+
+      <p class="navbar-text navbar-right">Signed in as Daniel Backhausen</p>
+    </nav>
+    
+    
+    <div class="row">
+      <div class="col-md-3">
+        #foreach ($task in ${tasks})
+        <div class="row">
+          <div class="col-md-10">
+            <a href="#springUrl("/tasks/${task.id}")">${task.title}</a>
+          </div>
+          <div class="col-md-2">
+            <a id="btn-delete-task" href="#springUrl("/tasks/delete/${task.id}")"><span class="glyphicon glyphicon-trash"></span></a>
+          </div>
+        </div>
+        #end
+        <br/>
+        <div class="row">
+          <form id="quick-add-task-form" method="POST" action="#springUrl("/tasks/")">
+            #springBind("currentTask.title")
+            <div class="col-md-9">
+              <input id="task-title" class="form-control input-sm" placeholder="#springMessage("placeholder.task.title")" value="${status.value}" />
+            </div>
+            <div class="col-md-3">
+              <button type="submit" class="btn btn-primary btn-sm">#springMessage("button.add")</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <div class="col-md-9">
+        <!-- Navigation tabs -->
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#details" data-toggle="tab"><i class="glyphicon glyphicon-th-large"></i> #springMessage("tab.task.details")</a></li>
+          <li><a href="#notes" data-toggle="tab"><i class="glyphicon glyphicon-comment"></i> #springMessage("tab.task.notes")</a></li>
+          <li><a href="#links" data-toggle="tab"><i class="glyphicon glyphicon-link"></i> #springMessage("tab.task.links")</a></li>
+          <li><a href="#files" data-toggle="tab"><i class="glyphicon glyphicon-file"></i> #springMessage("tab.task.files")</a></li>
+          <li><a href="#history" data-toggle="tab"><i class="glyphicon glyphicon-hdd"></i> #springMessage("tab.task.history")</a></li>
+        </ul>
+          
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div class="tab-pane fade in active" id="details">
+            <div class="form-group">
+              <label for="task-title" class="control-label">#springMessage("label.task.title"):</label>
+              <input id="task-title" class="form-control" placeholder="#springMessage("placeholder.task.title")" value="${currentTask.title}" />
+            </div>
+            <div class="form-group">
+              <label for="task-description" class="control-label">#springMessage("label.task.description"):</label>
+              <textarea id="task-description" class="form-control" placeholder="#springMessage("placeholder.task.description")">${currentTask.description}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">#springMessage("button.save")</button>
+            <button type="cancel" class="btn btn-default btn-sm">#springMessage("button.cancel")</button>
+          </div>
+          <div class="tab-pane fade" id="notes">
+            <div class="well">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus vehicula sapien ut feugiat. Proin varius placerat mauris, vitae gravida magna luctus in. Aenean vitae lacus ut tortor lacinia euismod ac eget sem. Integer at turpis nec arcu suscipit condimentum. Donec tincidunt nulla in tincidunt ultricies. Nulla a tincidunt justo. Nunc et sagittis mauris.
+            </div>
+          </div>
+          <div class="tab-pane fade" id="links">
+            ...
+          </div>
+          <div class="tab-pane fade" id="files">
+            ...
+          </div>
+          <div class="tab-pane fade" id="history">
+            ...
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

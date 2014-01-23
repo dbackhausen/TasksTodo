@@ -1,0 +1,12 @@
+CACHE MANIFEST
+
+FALLBACK:
+/ /offline.html
+
+NETWORK:
+*
+
+CACHE:
+/clock.css
+/clock.js
+/clock-face.jpg
