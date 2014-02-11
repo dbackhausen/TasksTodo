@@ -5,6 +5,17 @@ $(document).ready(function() {
   // Initially load all tasks
   loadTasks();
   
+  $(function() {
+    $('#nestable-task-list').nestable({ 
+      callback: function(l,e) {
+        // l is the main container
+        // e is the element that was moved
+        console.log($(e).attr("id"));
+        console.log(e);
+      }
+    });
+  });
+  
   /////////////////////////////////////////////////////////////////////////////
   // TASK                                                                    //
   /////////////////////////////////////////////////////////////////////////////
@@ -29,8 +40,19 @@ $(document).ready(function() {
       
       // load all file of selected task
       loadFiles();
-
+      
+      $('#task-details-tags').tagsinput();
+      $('#task-details-tags').tagsinput('add', "Technology");
+      $('#task-details-tags').tagsinput('add', "Information");
+      $('#task-details-tags').tagsinput('add', "Information Retrieval");
+      $('#task-details-tags').tagsinput('add', "Search");
+      $('#task-details-tags').tagsinput('add', "Personalization");
+      $('#task-details-tags').tagsinput('add', "Context");
     };
+    
+//    self.unselectTask = function() {
+//      self.selectedTask = ko.observable();
+//    };
     
     self.newTask = function(data) {
       $('#new-task-button').toggle();
@@ -52,21 +74,21 @@ $(document).ready(function() {
     self.editTask = function(data) {
 //      $('#new-note-button').toggle();
 //      $('#new-note-form').toggle();
-      $('#'+data.idAsString+' .inline-view').toggle();
-      $('#'+data.idAsString+' .inline-edit').toggle();
+      $('#details .inline-view').toggle();
+      $('#details .inline-edit').toggle();
     };
 
     self.cancelEditTask = function(data) {
-      $('#'+data.idAsString+' .inline-view').toggle();
-      $('#'+data.idAsString+' .inline-edit').toggle();
+      $('#details .inline-view').toggle();
+      $('#details .inline-edit').toggle();
     };
     
-    self.saveTask = function(data) {
-      saveTask(data);
+    self.saveTask = function() {
+      saveTask(self.selectedTask());
     };
     
-    self.deleteTask = function(data) {
-      deleteTask(data);
+    self.deleteTask = function() {
+      deleteTask(self.selectedTask());
     };
     
     // --
@@ -229,13 +251,14 @@ $(document).ready(function() {
    * Adds a new task.
    */
   function addTask(form) {
+    var parent = "52950ebe3004676c2b42a108"; // TODO
     var taskTitle = $("#input-new-task-title").val();
-    
+
     if (taskTitle != null && taskTitle.trim().length > 0) {
       var json = { "title" : taskTitle };
       
       $.ajax({
-        url: "/taskstodo/tasks/api/create",
+        url: "/taskstodo/tasks/api/create/" + parent,
         data: JSON.stringify(json),
         type: "POST",
         
@@ -245,11 +268,13 @@ $(document).ready(function() {
         },
         success: function(data) {
           if (data != null) {
-            taskModel.tasks.unshift(data);
+            taskModel.tasks.push(data);
           }
           
           // Reset the form
           $('#input-new-task-title').val(null);
+          $('#new-task-button').toggle();
+          $('#new-task-form').toggle();
         },
         error: function(jqXHR, textStatus, errorThrown) {
           if (console && console.error) {
@@ -281,6 +306,7 @@ $(document).ready(function() {
             console.log("Task " + task.idAsString + " successfully updated!");
           }
           
+          // Reload all tasks
           loadTasks();
           // TODO Deactivate edit mode of this task!
         },
@@ -297,28 +323,30 @@ $(document).ready(function() {
    * Deletes a given task.
    */
   function deleteTask(task) {
-    $.ajax({
-      url: "/taskstodo/tasks/api/delete/" + task.idAsString,
-      type: "DELETE",
-
-      beforeSend: function(xhr) {
-        xhr.setRequestHeader("Accept", "application/json");
-        xhr.setRequestHeader("Content-Type", "application/json");
-      },
-      success: function(data) {
-        if (console && console.log) {
-          console.log("Task " + task.idAsString + " successfully deleted!");
+    if (task != null) {
+      $.ajax({
+        url: "/taskstodo/tasks/api/delete/" + task.idAsString,
+        type: "DELETE",
+  
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader("Accept", "application/json");
+          xhr.setRequestHeader("Content-Type", "application/json");
+        },
+        success: function(data) {
+          if (console && console.log) {
+            console.log("Task " + task.idAsString + " successfully deleted!");
+          }
+          
+          // Reload all tasks
+          loadTasks();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          if (console && console.error) {
+            console.error("Error deleting task " + task.idAsString + "! Error: " + errorThrown);
+          }
         }
-        
-        // Remove the task from the view model
-        taskModel.tasks.remove(task);
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-        if (console && console.error) {
-          console.error("Error deleting task " + task.idAsString + "! Error: " + errorThrown);
-        }
-      }
-    });
+      });
+    }
   }
   
   /////////////////////////////////////////////////////////////////////////////
@@ -361,7 +389,7 @@ $(document).ready(function() {
     var note = $("#input-new-note-body").val();
     
     if (note != null && note.trim().length > 0) {
-      var json = { "body" : $("#input-new-note-body").val() };
+      var json = { "body" : note };
       
       $.ajax({
         url: "/taskstodo/notes/api/create/"+taskModel.selectedTask().idAsString,
@@ -628,127 +656,52 @@ $(document).ready(function() {
     });
   }
   
-
-//  /*jslint unparam: true, regexp: true */
-//  /*global window, $ */
-//  $(function () {
-//      'use strict';
-//      // Change this to the location of your server-side upload handler:
-//      var url = window.location.hostname === 'blueimp.github.io' ?
-//                  '//jquery-file-upload.appspot.com/' : 'server/php/',
-//          uploadButton = $('<button/>')
-//              .addClass('btn btn-primary')
-//              .prop('disabled', true)
-//              .text('Processing...')
-//              .on('click', function () {
-//                  var $this = $(this),
-//                      data = $this.data();
-//                  $this
-//                      .off('click')
-//                      .text('Abort')
-//                      .on('click', function () {
-//                          $this.remove();
-//                          data.abort();
-//                      });
-//                  data.submit().always(function () {
-//                      $this.remove();
-//                  });
-//              });
-//      $('#fileupload').fileupload({
-//          url: url,
-//          dataType: 'json',
-//          autoUpload: false,
-//          acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-//          maxFileSize: 5000000, // 5 MB
-//          // Enable image resizing, except for Android and Opera,
-//          // which actually support image resizing, but fail to
-//          // send Blob objects via XHR requests:
-//          disableImageResize: /Android(?!.*Chrome)|Opera/
-//              .test(window.navigator.userAgent),
-//          previewMaxWidth: 100,
-//          previewMaxHeight: 100,
-//          previewCrop: true
-//      }).on('fileuploadadd', function (e, data) {
-//          data.context = $('<div/>').appendTo('#files');
-//          $.each(data.files, function (index, file) {
-//              var node = $('<p/>')
-//                      .append($('<span/>').text(file.name));
-//              if (!index) {
-//                  node
-//                      .append('<br>')
-//                      .append(uploadButton.clone(true).data(data));
-//              }
-//              node.appendTo(data.context);
-//          });
-//      }).on('fileuploadprocessalways', function (e, data) {
-//          var index = data.index,
-//              file = data.files[index],
-//              node = $(data.context.children()[index]);
-//          if (file.preview) {
-//              node
-//                  .prepend('<br>')
-//                  .prepend(file.preview);
-//          }
-//          if (file.error) {
-//              node
-//                  .append('<br>')
-//                  .append($('<span class="text-danger"/>').text(file.error));
-//          }
-//          if (index + 1 === data.files.length) {
-//              data.context.find('button')
-//                  .text('Upload')
-//                  .prop('disabled', !!data.files.error);
-//          }
-//      }).on('fileuploadprogressall', function (e, data) {
-//          var progress = parseInt(data.loaded / data.total * 100, 10);
-//          $('#progress .progress-bar').css(
-//              'width',
-//              progress + '%'
-//          );
-//      }).on('fileuploaddone', function (e, data) {
-//          $.each(data.result.files, function (index, file) {
-//              if (file.url) {
-//                  var link = $('<a>')
-//                      .attr('target', '_blank')
-//                      .prop('href', file.url);
-//                  $(data.context.children()[index])
-//                      .wrap(link);
-//              } else if (file.error) {
-//                  var error = $('<span class="text-danger"/>').text(file.error);
-//                  $(data.context.children()[index])
-//                      .append('<br>')
-//                      .append(error);
-//              }
-//          });
-//      }).on('fileuploadfail', function (e, data) {
-//          $.each(data.files, function (index, file) {
-//              var error = $('<span class="text-danger"/>').text('File upload failed.');
-//              $(data.context.children()[index])
-//                  .append('<br>')
-//                  .append(error);
-//          });
-//      }).prop('disabled', !$.support.fileInput)
-//          .parent().addClass($.support.fileInput ? undefined : 'disabled');
+//  $(function() {
+//    'use strict';
+//    $('#fileupload').fileupload({
+//      url: '/taskstodo/files/api/create/52950f0730044756dfb4ee67',
+//      dataType: 'json',
+//      success: function (e, data) {
+//        loadFiles();
+//      },
+//      error: function(jqXHR, textStatus, errorThrown) {
+//        if (console && console.error) {
+//          console.error("Error loading files! Error: " + errorThrown);
+//        }
+//      }
+//    });
 //  });
-
-  $('#fileupload').fileupload();
   
-  function addFile(data) {
-    $('#fileupload').fileupload('add', {
-      url : "/taskstodo/files/api/create/"+taskModel.selectedTask().idAsString,
-      files: files
-    })
-    .success(function (result, textStatus, jqXHR) {
-      loadFiles();
-    })
-    .error(function (jqXHR, textStatus, errorThrown) {
-      if (console && console.error) {
-        console.error("Error uploading file! Error: " + errorThrown);
-      }
-    })
-    .complete(function (result, textStatus, jqXHR) {/* ... */});
+  function addFile() {
+    var formData = new FormData($('#task-file-form')[0]);
+
+    $.ajax({
+        url: '/taskstodo/files/api/create/'+taskModel.selectedTask().idAsString,
+        data: formData,
+        type: 'POST',
+        beforeSend: function(xhr) {
+        },
+        success: function(e, data) {
+          loadFiles();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          if (console && console.error) {
+            console.error("Error loading files! Error: " + errorThrown);
+          }
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    });
   }
   
+  /////////////////////////////////////////////////////////////////////////////
+  // FILTERS                                                                 //
+  /////////////////////////////////////////////////////////////////////////////
+  
+  ko.filters.smartdate = function(date) {
+      return moment(date).format("YYYY-MM-DD HH:mm");
+  };
   
   /////////////////////////////////////////////////////////////////////////////
   // GENERAL                                                                 //

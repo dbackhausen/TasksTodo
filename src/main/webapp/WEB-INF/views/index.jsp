@@ -3,81 +3,149 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <!DOCTYPE html>
-<html manifest="/cache.manifest">
+<html lang="en" manifest="/cache.manifest">
   <head>
-    <title>Tasks Todo</title>
+    <title>TasksTodo</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <link rel="stylesheet" href="<c:url value="/resources/css/normalize.css"/>"/>
     <link rel="stylesheet" href="<c:url value="/resources/css/main.css"/>"/>
     <link rel="stylesheet" href="<c:url value="/resources/css/bootstrap-theme.min.css"/>"/>
     <link rel="stylesheet" href="<c:url value="/resources/css/bootstrap.min.css"/>"/>
     <link rel="stylesheet" href="<c:url value="/resources/css/jquery.fileupload.css"/>"/>
+    <link rel="stylesheet" href="<c:url value="/resources/css/bootstrap-tagsinput.css"/>"/>
+    <link rel="stylesheet" href="<c:url value="/resources/css/datepicker3.css"/>"/>
     <link rel="stylesheet" href="<c:url value="/resources/css/style.css"/>"/>
     <script src="<c:url value="/resources/js/jquery-1.10.2.min.js"/>"></script>
     <script src="<c:url value="/resources/js/jquery.ui.widget.js"/>"></script>
     <script src="<c:url value="/resources/js/jquery.iframe-transport.js"/>"></script>
     <script src="<c:url value="/resources/js/jquery.fileupload.js"/>"></script>
+    <script src="<c:url value="/resources/js/jquery-ui-1.10.4.custom.min.js"/>"></script>
     <script src="<c:url value="/resources/js/respond.min.js"/>"></script>
     <script src="<c:url value="/resources/js/modernizr-2.6.2.min.js"/>"></script>
     <script src="<c:url value="/resources/js/bootstrap.min.js"/>"></script>
     <script src="<c:url value="/resources/js/bootstrap-paginator.js"/>"></script>
+    <script src="<c:url value="/resources/js/bootstrap-tagsinput.min.js"/>"></script>
+    <script src="<c:url value="/resources/js/bootstrap-datepicker.js"/>"></script>
+    <script src="<c:url value="/resources/js/typeahead.min.js"/>"></script>
     <script src="<c:url value="/resources/js/knockout-3.0.0.js"/>"></script>
     <script src="<c:url value="/resources/js/knockout.punches.min.js"/>"></script>
+    <script src="<c:url value="/resources/js/moment.min.js"/>"></script>
+    <script src="<c:url value="/resources/js/jquery.nestable.js"/>"></script>
     <script src="<c:url value="/resources/js/tasks.js"/>"></script>
   </head>
   <body>
     <nav class="navbar navbar-default" role="navigation">
       <div class="navbar-header">
         <a class="navbar-brand" href="">Tasks Todo</a>
+      <p class="navbar-text navbar-right">Signed in as Daniel</p>
       </div>
-
-      <p class="navbar-text navbar-right">Signed in as Daniel Backhausen</p>
     </nav>
   
     <div id="tasks" class="row">
-      <div class="col-md-3">
-        <h3>Inbox</h3>
-        <ul id="task-list" data-bind="foreach: tasks" class="task-list">
-          <li data-bind="attr: { id: idAsString }">
-            <a data-bind="click: $parent.selectTask"><span data-bind="text: title"></span></a>
-          </li>
-        </ul>        
+      <div id="tasks-list" class="col-md-3">
+        <h1 class="goal-header">Inbox</h1>
+        <div id="nestable-task-list" class="dd">
+          <ol data-bind="foreach: tasks" class="task-list dd-list">
+            <li class="dd-item dd3-item" data-bind="attr: { id: idAsString }">
+              <div class="dd-handle dd3-handle"></div>
+              <div data-bind="click: $parent.selectTask, css: { selected: ($root.selectedTask() != null && $root.selectedTask().idAsString == idAsString) }" class="dd3-content"><span data-bind="text: title"></span></div>
+            </li>
+          </ol>
+        </div>
+        <hr/>
+        <button id="new-task-button" data-bind="click: newTask" class="btn btn-primary btn-sm"><spring:message code="button.task.add" /></button>
+        <form id="new-task-form" data-bind="submit: addTask">
+          <div class="form-group">
+            <input id="input-new-task-title" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm"><spring:message code="button.task.add" /></button>
+          <button data-bind="click: cancelNewTask" class="btn btn-default btn-sm"><spring:message code="button.cancel" /></button>
+        </form>
       </div>
 
       <div class="col-md-9" data-bind="if: selectedTask() != null">
         <!-- Navigation tabs -->
-        <ul class="nav nav-tabs">
-          <li id="tab-details" class="active"><a href="#details" data-toggle="tab"><i class="glyphicon glyphicon-th-large"></i> <spring:message code="tab.task.details" /></a></li>
-          <li id="tab-notes"><a href="#notes" data-toggle="tab"><i class="glyphicon glyphicon-comment"></i> <spring:message code="tab.task.notes" /></a></li>
-          <li id="tab-links"><a href="#links" data-toggle="tab"><i class="glyphicon glyphicon-link"></i> <spring:message code="tab.task.links" /></a></li>
-          <li id="tab-files"><a href="#files" data-toggle="tab"><i class="glyphicon glyphicon-file"></i> <spring:message code="tab.task.files" /></a></li>
-          <li id="tab-history"><a href="#history" data-toggle="tab"><i class="glyphicon glyphicon-hdd"></i> <spring:message code="tab.task.history" /></a></li>
+        <ul id="task-nav-tab" class="nav nav-tabs">
+          <li id="tab-details" class="active"><a href="#details" data-toggle="tab"><i class="glyphicon glyphicon-th-large"></i><span><spring:message code="tab.task.details" /></span></a></li>
+          <li id="tab-notes"><a href="#notes" data-toggle="tab"><i class="glyphicon glyphicon-comment"></i><span><spring:message code="tab.task.notes" /></span></a></li>
+          <li id="tab-links"><a href="#links" data-toggle="tab"><i class="glyphicon glyphicon-link"></i><span><spring:message code="tab.task.links" /></span></a></li>
+          <li id="tab-files"><a href="#files" data-toggle="tab"><i class="glyphicon glyphicon-file"></i><span><spring:message code="tab.task.files" /></span></a></li>
+          <li id="tab-history"><a href="#history" data-toggle="tab"><i class="glyphicon glyphicon-hdd"></i><span><spring:message code="tab.task.history" /></span></a></li>
         </ul>
           
         <!-- Tab panes -->
         <div class="tab-content">
-        
           <!-- 
             TAB: DETAILS
             -->
           <div id="details" class="tab-pane fade in active">
-            <!-- TODO -->
-            <p><label for="task-details-title">Title</label>
-            <span id="task-details-title" data-bind="text: selectedTask().title"></span></p>
-            <p><label for="task-details-title">Description</label>
-            <span data-bind="text: selectedTask().description"></span></p>
-            <p><label for="task-details-title">Due date</label>
-            <span data-bind="text: selectedTask().dueDate"></span></p>
-            <p><label for="task-details-title">Completed date</label>
-            <span data-bind="text: selectedTask().completedDate"></span></p>
-            <p><label for="task-details-title">Reminder date</label>
-            <span data-bind="text: selectedTask().reminderDate"></span></p>
-            <p><label for="task-details-title">Urgency</label>
-            <span data-bind="text: selectedTask().urgency"></span></p>
-            <p><label for="task-details-title">Priority</label>
-            <span data-bind="text: selectedTask().priority"></span></p>
+            <div class="inline-view">
+              <p><label for="task-details-title">Title</label>
+              <span id="task-details-title" data-bind="text: selectedTask().title"></span></p>
+              <p><label for="task-details-title">Description</label>
+              <span data-bind="text: selectedTask().description"></span></p>
+              <p><label for="task-details-title">Create date</label>
+              <span data-bind="text: selectedTask().created | smartdate"></span></p>
+              <p><label for="task-details-title">Modified date</label>
+              <span data-bind="text: selectedTask().modified | smartdate"></span></p>
+              <p><label for="task-details-title">Due date</label>
+              <span data-bind="text: selectedTask().dueDate | smartdate"></span></p>
+              <p><label for="task-details-title">Completed date</label>
+              <span data-bind="text: selectedTask().completedDate | smartdate"></span></p>
+              <p><label for="task-details-title">Reminder date</label>
+              <span data-bind="text: selectedTask().reminderDate | smartdate"></span></p>
+              <p><label for="task-details-title">Urgency</label>
+              <span data-bind="text: selectedTask().urgency"></span></p>
+              <p><label for="task-details-title">Priority</label>
+              <span data-bind="text: selectedTask().priority"></span></p>
+              <hr />
+              <button data-bind="click: editTask" class="btn btn-primary btn-sm"><spring:message code="button.edit" /></button>
+              <button data-bind="click: deleteTask" class="btn btn-default btn-sm"><spring:message code="button.delete" /></button></p>
+            </div>
+            <div class="inline-edit">
+              <p><label for="task-details-title">Title</label>
+              <input type="text" data-bind="value: selectedTask().title" class="form-control" /></p>
+              <p><label for="task-details-title">Description</label>
+              <textarea data-bind="value: selectedTask().description" class="form-control"></textarea></p>
+              <p><label for="task-details-title">Due date</label>
+              <input type="text" data-bind="value: selectedTask().dueDate" class="form-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" /></p>
+              <p><label for="task-details-title">Reminder date</label>
+              <input type="text" data-bind="value: selectedTask().reminderDate" class="form-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" /></p>
+<!--              <p><label for="task-details-title">Urgency</label>
+               <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-primary">
+                  <input type="radio" name="urgency" value="1" data-bind="checked: selectedTask().urgency"> low
+                </label>
+                <label class="btn btn-primary">
+                  <input type="radio" name="urgency" value="2" data-bind="checked: selectedTask().urgency"> mid
+                </label>
+                <label class="btn btn-primary">
+                  <input type="radio" name="urgency" value="3" data-bind="checked: selectedTask().urgency"> high
+                </label>
+              </div>
+              <p><label for="task-details-title">Priority</label>
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-primary">
+                  <input type="radio" name="priority" value="1" data-bind="checked: selectedTask().priority"> low
+                </label>
+                <label class="btn btn-primary">
+                  <input type="radio" name="priority" value="2" data-bind="checked: selectedTask().priority"> mid
+                </label>
+                <label class="btn btn-primary">
+                  <input type="radio" name="priority" value="3" data-bind="checked: selectedTask().priority"> high
+                </label>
+              </div> -->
+
+              <p><label for="task-details-tags">Tags</label>
+              <input id="task-details-tags" type="text" value="" class="form-control" /></p>
+
+              <hr/>
+              <button data-bind="click: saveTask" class="btn btn-primary btn-sm"><spring:message code="button.save" /></button>
+              <button data-bind="click: cancelEditTask" class="btn btn-default btn-sm"><spring:message code="button.cancel" /></button>
+            </div>
           </div>
 
           <!-- 
@@ -96,10 +164,11 @@
             <ul id="task-notes-list" data-bind="foreach: notes">
               <li data-bind="attr: { id: idAsString }">
                 <div class="well well-sm inline-view">
+                  <p><span data-bind="text: created | smartdate"></span></p>
                   <span data-bind="text: body"></span>
-                  <p><span data-bind="text: created"></span></p>
+                  <p>
                   <button data-bind="click: $parent.editNote" class="btn btn-default btn-sm"><spring:message code="button.edit" /></button>
-                  <button data-bind="click: $parent.deleteNote" class="btn btn-default btn-sm"><spring:message code="button.delete" /></button>
+                  <button data-bind="click: $parent.deleteNote" class="btn btn-default btn-sm"><spring:message code="button.delete" /></button></p>
                 </div>
                 <div class="inline-edit">
                   <div class="form-group">
@@ -146,7 +215,7 @@
                   <div class="media-body">
                     <h4 class="media-heading"><a data-bind="attr: { href: url }" target="_blank"><span data-bind="text: title"></span></a></h4>
                     <span data-bind="text: description" class="inline-view"></span>
-                    <p><span data-bind="text: created"></span></p>
+                    <p>Added on: <span data-bind="text: created | smartdate"></span></p>
                     <button data-bind="click: $parent.editLink" class="btn btn-default btn-sm"><spring:message code="button.edit" /></button>
                     <button data-bind="click: $parent.deleteLink" class="btn btn-default btn-sm"><spring:message code="button.delete" /></button>
                   </div>
@@ -174,14 +243,14 @@
             TAB: FILES
             -->
           <div id="files" class="tab-pane fade">
-          
-<span class="btn btn-success fileinput-button">
-  <i class="glyphicon glyphicon-plus"></i>
-  <span>Add files...</span>
-  <input id="fileupload" type="file" name="files[]" multiple>
-</span>
-<button data-bind="click: addFile" class="btn btn-primary">Upload</button>
-              
+            <form id="task-file-form" data-bind="submit: addFile" method="post" enctype="multipart/form-data">     
+              <span class="btn btn-success btn-sm fileinput-button">
+                <i class="glyphicon glyphicon-plus"></i>
+                <span>Add files...</span>
+                <input type="file" name="files[]" multiple>
+              </span>
+              <button type="submit" class="btn btn-primary btn-sm"><spring:message code="button.save" /></button>
+            </form>
             <hr />
             <ul data-bind="foreach: files" class="media-list">
               <li data-bind="attr: { id: idAsString }" class="media">
@@ -191,7 +260,7 @@
                 <div class="media-body">
                   <h4 class="media-heading"><a data-bind="attr: { href: '<c:url value="/files/download/"/>'+idAsString }" target="_blank"><span data-bind="text: filename"></span></a></h4>
                   <span data-bind="text: 'Lorem ipsum ...'"></span>
-                  <p><span data-bind="text: uploadDate"></span></p>
+                  <p><span data-bind="text: uploadDate | smartdate "></span></p>
                 </div>
               </li>
             </ul>
@@ -202,6 +271,7 @@
             -->
           <div id="history" class="tab-pane fade">
             <!-- TODO -->
+            This option is only available if you use our firefox plugin!
           </div>
           
         </div>

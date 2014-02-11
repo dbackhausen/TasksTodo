@@ -3,6 +3,8 @@ package org.taskstodo.service;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.taskstodo.dao.LinkDAO;
@@ -14,6 +16,9 @@ import org.taskstodo.model.Task;
 
 @Service
 public class TaskServiceImpl implements TaskService {
+  /* The Logger */
+  private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
+  
   /////////////////////////////////////////////////////////////////////////////
   // TASK                                                                    //
   /////////////////////////////////////////////////////////////////////////////
@@ -54,7 +59,9 @@ public class TaskServiceImpl implements TaskService {
    */
   public void deleteTask(ObjectId id) {
     noteDAO.deleteAllByTask(id);
+    
     linkDAO.deleteAllByTask(id);
+    
     taskDAO.delete(id);
   }
   
