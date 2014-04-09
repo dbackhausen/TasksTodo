@@ -2,17 +2,21 @@ package org.taskstodo.model;
 
 import java.util.Date;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class Task extends BasicEntity {
   private String title;
   private String description;
+  private ObjectId goal;
+  private ObjectId parentTask;
   private Date dueDate = null;
   private Date completedDate = null;
   private Date reminderDate = null;
   private int urgency;
   private int priority;
+  private int position = 1;
   
   // --
   
@@ -47,6 +51,22 @@ public class Task extends BasicEntity {
     }
   }
 
+  public ObjectId getGoal() {
+    return goal;
+  }
+  
+  public void setGoal(ObjectId goal) {
+    this.goal = goal;
+  }
+  
+  public ObjectId getParentTask() {
+    return parentTask;
+  }
+  
+  public void setParentTask(ObjectId parentTask) {
+    this.parentTask = parentTask;
+  }
+  
   public Date getDueDate() {
     return dueDate;
   }
@@ -101,7 +121,15 @@ public class Task extends BasicEntity {
       setModified(new Date());
     }
   }
-
+  
+  public int getPosition() {
+    return position;
+  }
+  
+  public void setPosition(int position) {
+    this.position = position;
+  }
+  
   // --
 
   @Override

@@ -289,6 +289,30 @@ li {
   background: #ddd;
 }
 
+.item-container {
+  height: 15px;
+  margin: 5px 0px 0px 0px;
+}
+
+.item-modified-date {
+  float: left;
+  font-size: 12px;
+  padding-right: 10px;
+  color: #666666;
+}
+
+.item-edit-link {
+  float: left;
+  padding: 0 5px;
+  font-size: 12px;
+}
+
+.item-delete-link {
+  float: left;
+  padding: 0 5px;
+  font-size: 12px;
+}
+
 /**
  * GOAL
  */
@@ -333,6 +357,10 @@ h1.goal-header {
   padding-left: 5px;
 }
 
+.task-tags {
+  clear: left;
+}
+
 /**
  * TASK: NOTES
  */
@@ -350,6 +378,10 @@ h1.goal-header {
   display: none;
 }
 
+#task-notes-list .well {
+ margin-bottom: 5px;
+}
+  
 /**
  * TASK: LINKS
  */

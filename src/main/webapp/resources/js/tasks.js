@@ -11,7 +11,8 @@ $(document).ready(function() {
         // l is the main container
         // e is the element that was moved
         console.log($(e).attr("id"));
-        console.log(e);
+        console.log($(e).parent().parent().attr("id"));
+        
       }
     });
   });
@@ -290,8 +291,18 @@ $(document).ready(function() {
    */
   function saveTask(task) {
     if (task != null) {
-      var json = { "title" : task.title };
-      
+      var json = { 
+          "title" : task.title, 
+          "description" : task.description,
+          "created": task.created,
+          "modified": task.modified,
+          "dueDate": task.dueDate,
+          "completedDate": task.completedDate,
+          "reminderDate": task.reminderDate,
+          "urgency": task.urgency,
+          "priority": task.priority
+      };
+
       $.ajax({
         url: "/taskstodo/tasks/api/update/" + task.idAsString,
         data: JSON.stringify(json),
@@ -700,9 +711,25 @@ $(document).ready(function() {
   /////////////////////////////////////////////////////////////////////////////
   
   ko.filters.smartdate = function(date) {
-      return moment(date).format("YYYY-MM-DD HH:mm");
+    if (date != null && date != undefined) {
+      return moment(date).format("YYYY-MM-DD HH:mm");      
+    } else {
+      return "not specified";
+    }
   };
   
+  ko.filters.smarturgency = function(urgency) {
+    if (urgency == 0) return "low";
+    else if (urgency == 1) return "mid";
+    else return "high";
+  };
+  
+  ko.filters.smartpriority = function(priority) {
+    if (priority == 0) return "low";
+    else if (priority == 1) return "mid";
+    else return "high";
+  };
+    
   /////////////////////////////////////////////////////////////////////////////
   // GENERAL                                                                 //
   /////////////////////////////////////////////////////////////////////////////

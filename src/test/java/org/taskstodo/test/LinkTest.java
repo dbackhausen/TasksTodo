@@ -12,13 +12,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.taskstodo.model.Note;
+import org.taskstodo.model.Link;
 import org.taskstodo.model.Task;
 import org.taskstodo.service.TaskService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/application-context.xml"})
-public class NoteTest {
+public class LinkTest {
   @Resource
   private TaskService taskService;
   
@@ -35,34 +35,39 @@ public class NoteTest {
   }
   
   @Test
-  public void manageNote() {
-    // Create note and add to task
-    Note note = new Note();
-    note.setBody("Lorem ipsum dolores");
-    ObjectId noteId = taskService.addNote(taskId, note);
-    Assert.assertNotNull(noteId);
+  public void manageLink() {
+    // Create link and add to task
+    Link link = new Link();
+    link.setTitle("Test Link");
+    link.setUrl("http://www.test.de");
+    ObjectId linkId = taskService.addLink(taskId, link);
+    Assert.assertNotNull(linkId);
     
-    // Read note and validate
-    note = null;
-    note = taskService.getNote(noteId);
-    Assert.assertNotNull(note);
-    Assert.assertEquals(note.getBody(), "Lorem ipsum dolores");
+    // Read link and validate
+    link = null;
+    link = taskService.getLink(linkId);
+    Assert.assertNotNull(link);
+    Assert.assertEquals(link.getTitle(), "Test Link");
+    Assert.assertEquals(link.getUrl(), "http://www.test.de");
     
-    // Update note
-    note.setBody("Test Test Test");
-    taskService.updateNote(note);
+    // Update link
+    link.setTitle("Eightbit");
+    link.setUrl("http://www.eightbit.de");
+    taskService.updateLink(link);
     
-    // Read note and validate
-    note = null;
-    note = taskService.getNote(noteId);
-    Assert.assertNotNull(note);
-    Assert.assertEquals(note.getBody(), "Test Test Test");
+    // Read link and validate
+    link = null;
+    link = taskService.getLink(linkId);
+    Assert.assertNotNull(link);
+    Assert.assertEquals(link.getTitle(), "Eightbit");
+    Assert.assertEquals(link.getUrl(), "http://www.eightbit.de");
     
-    // Delete note and validate
-    taskService.deleteNote(note.getId());
-    note = null;
-    note = taskService.getNote(noteId);
-    Assert.assertNull(note);
+    // Delete link and validate
+    taskService.deleteLink(link.getId());
+    link = null;
+    link = taskService.getLink(linkId);
+    Assert.assertNull(link);
+    
   }
   
   // --

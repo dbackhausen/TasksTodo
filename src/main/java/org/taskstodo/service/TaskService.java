@@ -22,6 +22,26 @@ public interface TaskService {
   public ObjectId addTask(Task task);
   
   /**
+   * Adds a sub task to a parent task.
+   * 
+   * @param parentId - the parent ID.
+   * @param subTask - the subtask.
+   * 
+   * @return the ID of the new subtask.
+   */
+  public ObjectId addSubTask(ObjectId parentId, Task subTask);
+  
+  /**
+   * Adds a sub task to a parent task.
+   * 
+   * @param parentId - the parent ID.
+   * @param subTask - the subtask.
+   * 
+   * @return the ID of the new subtask.
+   */
+  public ObjectId addSubTask(String parentId, Task subTask);
+  
+  /**
    * Updates an existing task.
    * 
    * @param task - the task.
@@ -38,6 +58,15 @@ public interface TaskService {
   public Task getTask(ObjectId id);
   
   /**
+   * Returns a given task by its identifier.
+   * 
+   * @param id - the identifier.
+   * 
+   * @return the task.
+   */
+  public Task getTask(String id);
+  
+  /**
    * Returns all tasks.
    * 
    * @return the tasks.
@@ -45,11 +74,75 @@ public interface TaskService {
   public List<Task> getTasks();
   
   /**
+   * Returns all tasks by its goal.
+   * 
+   * @param goalId - the goal ID.
+   * @return the tasks.
+   */
+  public List<Task> getTasksByGoal(ObjectId goalId);
+  
+  /**
+   * Returns all tasks by its goal.
+   * 
+   * @param goalId - the goal ID.
+   * @return the tasks.
+   */
+  public List<Task> getTasksByGoal(String goalId);
+  
+  /**
+   * Returns all tasks.
+   * 
+   * @return the tasks.
+   */
+  public List<Task> getTasksAscOrderBy(String field);
+  
+  /**
+   * Returns all sub tasks of a given task.
+   * 
+   * @param parentId - the parent ID.
+   * @return the tasks.
+   */
+  public List<Task> getSubTasks(ObjectId parentId);
+  
+  /**
+   * Returns all sub tasks of a given task.
+   * 
+   * @param parentId - the parent ID.
+   * @return the tasks.
+   */
+  public List<Task> getSubTasks(String parentId);
+  
+  /**
+   * Return the amount of existing subtasks.
+   * 
+   * @param parentId - the parent ID.
+   * @return the number of subtasks.
+   */
+  public int getSubTaskCount(ObjectId parentId);
+  
+  /**
+   * Return the amount of existing subtasks.
+   * 
+   * @param parentId - the parent ID.
+   * @return the number of subtasks.
+   */
+  public int getSubTaskCount(String parentId);
+  
+  /**
    * Deletes a given task by its identifier.
    * 
    * @param id - the identifier.
+   * @param cascade - cascade delete all subtasks
    */
-  public void deleteTask(ObjectId id);
+  public void deleteTask(ObjectId id, boolean cascade);
+  
+  /**
+   * Deletes a given task by its identifier.
+   * 
+   * @param id - the identifier.
+   * @param cascade - cascade delete all subtasks
+   */
+  public void deleteTask(String id, boolean cascade);
   
   /////////////////////////////////////////////////////////////////////////////
   // NOTE                                                                    //

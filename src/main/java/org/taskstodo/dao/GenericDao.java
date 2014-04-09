@@ -3,6 +3,7 @@ package org.taskstodo.dao;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Sort;
 
 public interface GenericDao<T> {
   /**
@@ -30,6 +31,13 @@ public interface GenericDao<T> {
    */
   public List<T> findAll();
 
+  /**
+   * Returns all entities sorted by a given option.
+   * 
+   * @return all entities.
+   */
+  public List<T> findAll(Sort sort);
+  
   /**
    * Updates an existing entity.
    * 

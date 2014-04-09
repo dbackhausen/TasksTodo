@@ -5,19 +5,19 @@
   <appender name="console" class="org.apache.log4j.ConsoleAppender">
     <param name="Target" value="System.out"/>
     <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%-6r %-5p %c %x - %m%n" />
+      <param name="ConversionPattern" value="%-20d{yyyy/MM/dd HH:mm:ss} [%-5p] [%c{1}] %x - %m%n" />
     </layout>
   </appender>
 
   <appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
-    <param name="File" value="demoApplication.log"/>
+    <param name="File" value="taskstodo.log"/>
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%-6r %-5p %c %x - %m%n" />
     </layout>
   </appender>
 
   <root>
-    <priority value="info"></priority>
+    <priority value="debug"></priority>
     <appender-ref ref="console"></appender-ref>
   </root>
   

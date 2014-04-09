@@ -53,6 +53,11 @@ public class LinkController {
     taskService.deleteLink(linkId);
   }
   
+  @RequestMapping(value = "/api/delete/{linkId}", method = RequestMethod.POST)
+  public @ResponseStatus(value = HttpStatus.NO_CONTENT) void deleteByPost(@PathVariable ObjectId linkId) {
+    taskService.deleteLink(linkId);
+  }
+  
   @RequestMapping(value = "/api/list/{taskId}", method = RequestMethod.GET)
   public @ResponseBody List<Link> list(@PathVariable("taskId") ObjectId taskId) {
     List<Link> links = new ArrayList<Link>();

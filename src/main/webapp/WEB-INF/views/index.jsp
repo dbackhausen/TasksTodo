@@ -83,27 +83,37 @@
             -->
           <div id="details" class="tab-pane fade in active">
             <div class="inline-view">
-              <p><label for="task-details-title">Title</label>
+              <p><label for="task-details-title">Title:</label>
               <span id="task-details-title" data-bind="text: selectedTask().title"></span></p>
-              <p><label for="task-details-title">Description</label>
+              <p><label for="task-details-title">Description:</label>
               <span data-bind="text: selectedTask().description"></span></p>
-              <p><label for="task-details-title">Create date</label>
+              <p><label for="task-details-title">Create date:</label>
               <span data-bind="text: selectedTask().created | smartdate"></span></p>
-              <p><label for="task-details-title">Modified date</label>
+              <p><label for="task-details-title">Modified date:</label>
               <span data-bind="text: selectedTask().modified | smartdate"></span></p>
-              <p><label for="task-details-title">Due date</label>
+              <p><label for="task-details-title">Due date:</label>
               <span data-bind="text: selectedTask().dueDate | smartdate"></span></p>
-              <p><label for="task-details-title">Completed date</label>
+              <p><label for="task-details-title">Completed date:</label>
               <span data-bind="text: selectedTask().completedDate | smartdate"></span></p>
-              <p><label for="task-details-title">Reminder date</label>
+              <p><label for="task-details-title">Reminder date:</label>
               <span data-bind="text: selectedTask().reminderDate | smartdate"></span></p>
-              <p><label for="task-details-title">Urgency</label>
-              <span data-bind="text: selectedTask().urgency"></span></p>
-              <p><label for="task-details-title">Priority</label>
-              <span data-bind="text: selectedTask().priority"></span></p>
+              <p><label for="task-details-title">Urgency:</label>
+              <span data-bind="text: selectedTask().urgency | smarturgency"></span></p>
+              <p><label for="task-details-title">Priority:</label>
+              <span data-bind="text: selectedTask().priority | smartpriority"></span></p>
               <hr />
-              <button data-bind="click: editTask" class="btn btn-primary btn-sm"><spring:message code="button.edit" /></button>
-              <button data-bind="click: deleteTask" class="btn btn-default btn-sm"><spring:message code="button.delete" /></button></p>
+              <div class="item-container">
+                <div class="item-modified-date">
+                  Created: <span data-bind="text: selectedTask().created | smartdate"></span> |
+                  Modified: <span data-bind="text: selectedTask().modified | smartdate"></span>
+                </div>
+                <div class="item-edit-link">
+                  <a href="#" data-bind="click: editTask">edit</a>
+                </div>
+                <div class="item-delete-link">
+                  <a href="#" data-bind="click: deleteTask">delete</a>
+                </div>
+              </div>
             </div>
             <div class="inline-edit">
               <p><label for="task-details-title">Title</label>
@@ -138,10 +148,8 @@
                   <input type="radio" name="priority" value="3" data-bind="checked: selectedTask().priority"> high
                 </label>
               </div> -->
-
               <p><label for="task-details-tags">Tags</label>
-              <input id="task-details-tags" type="text" value="" class="form-control" /></p>
-
+              <input id="task-details-tags" type="text" value="" class="form-control task-tags" /></p>
               <hr/>
               <button data-bind="click: saveTask" class="btn btn-primary btn-sm"><spring:message code="button.save" /></button>
               <button data-bind="click: cancelEditTask" class="btn btn-default btn-sm"><spring:message code="button.cancel" /></button>
@@ -164,11 +172,19 @@
             <ul id="task-notes-list" data-bind="foreach: notes">
               <li data-bind="attr: { id: idAsString }">
                 <div class="well well-sm inline-view">
-                  <p><span data-bind="text: created | smartdate"></span></p>
                   <span data-bind="text: body"></span>
-                  <p>
-                  <button data-bind="click: $parent.editNote" class="btn btn-default btn-sm"><spring:message code="button.edit" /></button>
-                  <button data-bind="click: $parent.deleteNote" class="btn btn-default btn-sm"><spring:message code="button.delete" /></button></p>
+                  <hr/>
+                  <div class="item-container">
+                    <div class="item-modified-date">
+                      <span data-bind="text: created | smartdate"></span>
+                    </div>
+                    <div class="item-edit-link">
+                      <a href="#" data-bind="click: $parent.editNote">edit</a>
+                    </div>
+                    <div class="item-delete-link">
+                      <a href="#" data-bind="click: $parent.deleteNote">delete</a>
+                    </div>
+                  </div>
                 </div>
                 <div class="inline-edit">
                   <div class="form-group">
@@ -214,10 +230,18 @@
                 <div class="inline-view">
                   <div class="media-body">
                     <h4 class="media-heading"><a data-bind="attr: { href: url }" target="_blank"><span data-bind="text: title"></span></a></h4>
-                    <span data-bind="text: description" class="inline-view"></span>
-                    <p>Added on: <span data-bind="text: created | smartdate"></span></p>
-                    <button data-bind="click: $parent.editLink" class="btn btn-default btn-sm"><spring:message code="button.edit" /></button>
-                    <button data-bind="click: $parent.deleteLink" class="btn btn-default btn-sm"><spring:message code="button.delete" /></button>
+                    <p><span data-bind="text: description" class="inline-view"></span></p>
+                    <div class="item-container">
+                      <div class="item-modified-date">
+                        <span data-bind="text: created | smartdate"></span>
+                      </div>
+                      <div class="item-edit-link">
+                        <a href="#" data-bind="click: $parent.editLink">edit</a>
+                      </div>
+                      <div class="item-delete-link">
+                        <a href="#" data-bind="click: $parent.deleteLink">delete</a>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div class="inline-edit">

@@ -3,9 +3,9 @@ package org.taskstodo.service;
 import java.util.List;
 
 import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.taskstodo.dao.LinkDAO;
 import org.taskstodo.dao.NoteDAO;
@@ -16,9 +16,6 @@ import org.taskstodo.model.Task;
 
 @Service
 public class TaskServiceImpl implements TaskService {
-  /* The Logger */
-  private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
-  
   /////////////////////////////////////////////////////////////////////////////
   // TASK                                                                    //
   /////////////////////////////////////////////////////////////////////////////
@@ -31,6 +28,29 @@ public class TaskServiceImpl implements TaskService {
    */
   public ObjectId addTask(Task task) {
     return taskDAO.create(task);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#addSubTask(org.bson.types.ObjectId, org.taskstodo.model.Task)
+   */
+  public ObjectId addSubTask(ObjectId parentId, Task subTask) {
+    Task parent = taskDAO.findById(parentId);
+    if (parent != null) {
+      int counter = getSubTaskCount(parentId) + 1;
+      subTask.setGoal(parent.getGoal());
+      subTask.setParentTask(parentId);
+      subTask.setPosition(counter);
+      return addTask(subTask);
+    }
+    
+    return null;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#addSubTask(java.lang.String, org.taskstodo.model.Task)
+   */
+  public ObjectId addSubTask(String parentId, Task subTask) {
+    return addSubTask(new ObjectId(parentId), subTask); 
   }
 
   /* (non-Javadoc)
@@ -47,6 +67,11 @@ public class TaskServiceImpl implements TaskService {
     return taskDAO.findById(id);
   }
   
+  @Override
+  public Task getTask(String id) {
+    return getTask(new ObjectId(id));
+  }
+  
   /* (non-Javadoc)
    * @see org.taskstodo.service.TaskService#getTasks()
    */
@@ -55,16 +80,87 @@ public class TaskServiceImpl implements TaskService {
   }
   
   /* (non-Javadoc)
-   * @see org.taskstodo.service.TaskService#deleteTask(org.bson.types.ObjectId)
+   * @see org.taskstodo.service.TaskService#getTasksByGoal(org.bson.types.ObjectId)
    */
-  public void deleteTask(ObjectId id) {
-    noteDAO.deleteAllByTask(id);
-    
-    linkDAO.deleteAllByTask(id);
-    
-    taskDAO.delete(id);
+  @Override
+  public List<Task> getTasksByGoal(ObjectId goalId) {
+    return taskDAO.findAllByGoal(goalId);
   }
   
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#getTasksByGoal(java.lang.String)
+   */
+  public List<Task> getTasksByGoal(String goalId) {
+    return getTasksByGoal(new ObjectId(goalId));
+  }
+  
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#getTasksAscOrderBy(java.lang.String)
+   */
+  public List<Task> getTasksAscOrderBy(String field) {
+    return taskDAO.findAll(new Sort(new Order(Sort.Direction.ASC, "field")));
+  }
+
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#getSubTasks(org.bson.types.ObjectId)
+   */
+  public List<Task> getSubTasks(ObjectId parentId) {
+    return taskDAO.findSubTasks(parentId);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#getSubTasks(java.lang.String)
+   */
+  @Override
+  public List<Task> getSubTasks(String parentId) {
+    return getSubTasks(new ObjectId(parentId));
+  }
+  
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#getSubTaskCount(org.bson.types.ObjectId)
+   */
+  public int getSubTaskCount(ObjectId parentId) {
+    List<Task> subTasks = getSubTasks(parentId);
+    return subTasks != null ? subTasks.size() : 0;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#getSubTaskCount(java.lang.String)
+   */
+  @Override
+  public int getSubTaskCount(String parentId) {
+    return getSubTaskCount(new ObjectId(parentId));
+  }
+  
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#deleteTask(org.bson.types.ObjectId, boolean)
+   */
+  public void deleteTask(ObjectId id, boolean cascade) {
+    if (id != null) {
+      // remove all task notes
+      noteDAO.deleteAllByTask(id);
+      // remove all task links
+      linkDAO.deleteAllByTask(id);
+      
+      if (cascade) {
+        List<Task> subtasks = getSubTasks(id);
+        for (Task subtask : subtasks) {
+          deleteTask(subtask.getId(), true);
+        }
+      }
+      
+      // finally remove task
+      taskDAO.delete(id);
+    }
+  }
+  
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#deleteTask(java.lang.String, boolean)
+   */
+  @Override
+  public void deleteTask(String id, boolean cascade) {
+    deleteTask(new ObjectId(id), cascade);
+  }
   
   /////////////////////////////////////////////////////////////////////////////
   // NOTE                                                                    //

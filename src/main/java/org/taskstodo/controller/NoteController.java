@@ -55,6 +55,11 @@ public class NoteController {
     taskService.deleteNote(noteId);
   }
   
+  @RequestMapping(value = "/api/delete/{noteId}", method = RequestMethod.POST)
+  public @ResponseStatus(value = HttpStatus.NO_CONTENT) void deleteByPost(@PathVariable ObjectId noteId) {
+    taskService.deleteNote(noteId);
+  }
+  
   @RequestMapping(value = "/api/list/{taskId}", method = RequestMethod.GET)
   public @ResponseBody List<Note> list(@PathVariable("taskId") ObjectId taskId) {
     List<Note> notes = new ArrayList<Note>();
