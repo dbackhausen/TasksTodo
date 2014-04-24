@@ -3,9 +3,8 @@ package org.taskstodo.controller;
 import java.util.List;
 
 import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -21,95 +20,11 @@ import org.taskstodo.service.TaskService;
 @Controller
 @RequestMapping(value = "/tasks")
 public class TaskController {
-  /* The Logger */
-  private static final Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
-
   @Autowired
   private TaskService taskService;
-  
-//  @Autowired
-//  private FileService fileService;
-//  
-//  @Autowired
-//  private TaskValidator taskValidator;
-  
-//  // --
-//  
-//  @ModelAttribute("newTask")
-//  public Task getNewTask() {
-//    return new Task();
-//  }
-//  
-//  @ModelAttribute("newNote")
-//  public Note getNewNote() {
-//    return new Note();
-//  }
-//  
-//  @ModelAttribute("newLink")
-//  public Link getNewLink() {
-//    return new Link();
-//  }
-//  
-//  @ModelAttribute("tasks")
-//  public List<Task> getTasks() {
-//    return taskService.getTasks();
-//  }
-//  
-//  // --
-//
-//  @RequestMapping(value = "/add", method = RequestMethod.POST)
-//  public String createTask(@ModelAttribute Task newTask, BindingResult result, ModelMap model) {
-//    if (result.hasErrors()) {
-//      LOGGER.error(result.hasFieldErrors() ? result.getFieldError().toString() : (result.hasGlobalErrors() ? result.getGlobalError().toString() : " No error?"));
-//      return "redirect:/";
-//    }
-//    
-//    ObjectId id = taskService.addTask(newTask);
-//    model.addAttribute("currentTask", taskService.getTask(id));
-//
-//    return "redirect:/tasks/" + id;
-//  }
-//  
-//  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-//  public String findTask(@PathVariable ObjectId id, ModelMap model) {
-//    LOGGER.debug("Load task with identifier " + id);
-//    model.addAttribute("currentTask", taskService.getTask(id));
-////    model.addAttribute("notes", taskService.getNotes(id));
-////    model.addAttribute("links", taskService.getLinks(id));
-////    model.addAttribute("files", fileService.getFiles(id));
-//    
-//    return "index";
-//  }
-//
-//  @RequestMapping(value = "/list", method = RequestMethod.GET)
-//  public String findAllTasks(ModelMap model) {
-//    model.addAttribute("currentTask", new Task());
-//    return "index";
-//  }
-//  
-//  @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
-//  public String createTask(@PathVariable ObjectId id, @ModelAttribute Task currentTask, BindingResult result, ModelMap model) {
-//    if (result.hasErrors()) {
-//      LOGGER.error(result.hasFieldErrors() ? result.getFieldError().toString() : (result.hasGlobalErrors() ? result.getGlobalError().toString() : " No error?"));
-//      return "redirect:/tasks/{id}";
-//    }
-//    
-//    currentTask.setId(id);
-//    taskService.updateTask(currentTask);
-//
-//    return "redirect:/tasks/{id}";
-//  }
-//  
-//  @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-//  public String deleteTask(@PathVariable ObjectId id) {
-//    LOGGER.debug("Remove task resource with identifier " + id.toString());
-//    taskService.deleteTask(id);
-//    
-//    return "redirect:/";
-//  }
-  
-  // --- API ------------------------------------------------------------------
 
+  // --
+  
   @RequestMapping(value = "/api/create/{goalId}", method = RequestMethod.POST, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   public @ResponseBody Task addTask(@PathVariable ObjectId goalId, @RequestBody Task task) {
@@ -175,20 +90,11 @@ public class TaskController {
   
   @RequestMapping(value = "/api/list/", method = RequestMethod.GET)
   public @ResponseBody List<Task> getAllTasks() {
-    return taskService.getTasksAscOrderBy("modified");
+    return taskService.getTasksOrderedBy("modified", Direction.DESC);
   }
   
   @RequestMapping(value = "/api/list/{goalId}", method = RequestMethod.GET)
   public @ResponseBody List<Task> getAllTasksByGoal(@PathVariable("goalId") ObjectId goalId) {
     return taskService.getTasksByGoal(goalId);
   }
-  
-//  // --
-//  
-//  @InitBinder
-//  public void initBinder(WebDataBinder webDataBinder) {
-//    SimpleDateFormat dateFormat = new SimpleDateFormat();
-//    dateFormat.setLenient(false);
-//    webDataBinder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
-//  }
 }

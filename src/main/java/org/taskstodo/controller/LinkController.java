@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,9 +20,6 @@ import org.taskstodo.service.TaskService;
 @Controller
 @RequestMapping(value = "/links")
 public class LinkController {
-  /* The Logger */
-  private static final Logger LOGGER = LoggerFactory.getLogger(LinkController.class);
-
   @Autowired
   private TaskService taskService;
   

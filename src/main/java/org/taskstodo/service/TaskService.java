@@ -3,6 +3,7 @@ package org.taskstodo.service;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Sort.Direction;
 import org.taskstodo.model.Link;
 import org.taskstodo.model.Note;
 import org.taskstodo.model.Task;
@@ -84,17 +85,11 @@ public interface TaskService {
   /**
    * Returns all tasks by its goal.
    * 
-   * @param goalId - the goal ID.
+   * @param field - the order field.
+   * @param direction - the direction order.
    * @return the tasks.
    */
-  public List<Task> getTasksByGoal(String goalId);
-  
-  /**
-   * Returns all tasks.
-   * 
-   * @return the tasks.
-   */
-  public List<Task> getTasksAscOrderBy(String field);
+  public List<Task> getTasksOrderedBy(String field, Direction direction);
   
   /**
    * Returns all sub tasks of a given task.
@@ -143,6 +138,14 @@ public interface TaskService {
    * @param cascade - cascade delete all subtasks
    */
   public void deleteTask(String id, boolean cascade);
+  
+  /**
+   * Deletes all tasks of a given goal.
+   * 
+   * @param id - the goal Id.
+   */
+  public void deleteTasksByGoal(ObjectId id);
+  
   
   /////////////////////////////////////////////////////////////////////////////
   // NOTE                                                                    //
@@ -233,4 +236,6 @@ public interface TaskService {
    * @param id - the identifier.
    */
   public void deleteLink(ObjectId id);
+
+  
 }

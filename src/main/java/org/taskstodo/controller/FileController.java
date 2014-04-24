@@ -38,14 +38,14 @@ public class FileController {
   @Autowired
   private FileService fileService;
   
-  // --- API ------------------------------------------------------------------
+  // --
   
   @RequestMapping(value = "/api/create/{taskId}", method = RequestMethod.POST)
   public void upload(@PathVariable("taskId") ObjectId taskId, 
       MultipartHttpServletRequest request, HttpServletResponse response) {
     Iterator<String> itr = request.getFileNames();
     MultipartFile mpf = null;
-LOGGER.debug("Uploading new file");
+
     if (taskId != null) {
       while (itr.hasNext()) {
         // Get the next MultipartFile

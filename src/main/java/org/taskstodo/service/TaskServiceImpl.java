@@ -5,6 +5,7 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.taskstodo.dao.LinkDAO;
@@ -95,10 +96,10 @@ public class TaskServiceImpl implements TaskService {
   }
   
   /* (non-Javadoc)
-   * @see org.taskstodo.service.TaskService#getTasksAscOrderBy(java.lang.String)
+   * @see org.taskstodo.service.TaskService#getTasksOrderedBy(java.lang.String, org.springframework.data.domain.Sort.Direction)
    */
-  public List<Task> getTasksAscOrderBy(String field) {
-    return taskDAO.findAll(new Sort(new Order(Sort.Direction.ASC, "field")));
+  public List<Task> getTasksOrderedBy(String field, Direction direction) {
+    return taskDAO.findAll(new Sort(new Order(direction, "field")));
   }
 
   /* (non-Javadoc)
@@ -160,6 +161,18 @@ public class TaskServiceImpl implements TaskService {
   @Override
   public void deleteTask(String id, boolean cascade) {
     deleteTask(new ObjectId(id), cascade);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#deleteTasksByGoal(org.bson.types.ObjectId)
+   */
+  @Override
+  public void deleteTasksByGoal(ObjectId id) {
+    List<Task> tasks = getTasksByGoal(id);
+    
+    for (Task task : tasks) {
+      deleteTask(task.getId(), true);
+    }
   }
   
   /////////////////////////////////////////////////////////////////////////////
