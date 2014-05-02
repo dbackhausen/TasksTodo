@@ -25,9 +25,10 @@ public class GoalController {
 
   // --
   
-  @RequestMapping(value = "/api/create", method = RequestMethod.POST, 
+  @RequestMapping(value = "/api/create/{userId}", method = RequestMethod.POST, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody Goal addGoal(@PathVariable ObjectId goalId, @RequestBody Goal goal) {
+  public @ResponseBody Goal addGoal(@PathVariable ObjectId userId, @RequestBody Goal goal) {
+    goal.setUserId(userId);
     ObjectId id = goalService.addGoal(goal);
     return goalService.getGoal(id);
   }

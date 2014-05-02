@@ -5,6 +5,26 @@ import java.util.Date;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * The task, which is assigned to a goal and can be assigned to another task.
+ * 
+ * {
+ *   "_id" : ObjectId("53037589300445563c8fdc6d"),
+ *   "_class" : "org.taskstodo.model.Task",
+ *   "title" : "Sample task",
+ *   "description" : "Sample description",
+ *   "goal": ObjectId("33037589300445563c8fdc6d"),
+ *   "parentTask": ObjectId("73037589300445563c8fdc6d"),
+ *   "dueDate" : ISODate("2014-02-18T15:00:25.882Z"),
+ *   "completedDate" : ISODate("2014-02-18T15:00:25.882Z"),
+ *   "reminderDate" : ISODate("2014-02-18T15:00:25.882Z"),
+ *   "urgency": 1,
+ *   "priority": 3,
+ *   "position": 1,
+ *   "created" : ISODate("2014-02-18T15:00:25.882Z"),
+ *   "modified" : ISODate("2014-02-18T15:00:25.881Z")
+ * }
+ */
 @Document
 public class Task extends BasicEntity {
   private String title;
