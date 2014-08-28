@@ -6,19 +6,20 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class Link extends BasicEntity {
+public class Tab extends BasicEntity {
   private ObjectId taskId;
+  private String tabId;
   private String title;
   private String url;
-  private String description;
-  private int relevance = 0;
+  private String thumbnail;
+
   
   // --
   
-  public Link() {
+  public Tab() {
   }
   
-  public Link(ObjectId taskId) {
+  public Tab(ObjectId taskId) {
     setTaskId(taskId);
   }
   
@@ -30,6 +31,14 @@ public class Link extends BasicEntity {
   
   public ObjectId getTaskId() {
     return taskId;
+  }
+  
+  public String getTabId() {
+    return tabId;
+  }
+  
+  public void setTabId(String tabId) {
+    this.tabId = tabId;
   }
   
   public String getTitle() {
@@ -54,25 +63,11 @@ public class Link extends BasicEntity {
     }
   }
   
-  public String getDescription() {
-    return description;
+  public String getThumbnail() {
+    return thumbnail;
   }
   
-  public void setDescription(String description) {
-    if (!isEqual(this.description, description)) {
-      this.description = description;
-      setModified(new Date());
-    }
-  }
-
-  public int getRelevance() {
-    return relevance;
-  }
-
-  public void setRelevance(int relevance) {
-    if (this.relevance != relevance) {
-      this.relevance = relevance;
-      setModified(new Date());
-    }
+  public void setThumbnail(String thumbnail) {
+    this.thumbnail = thumbnail;
   }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.taskstodo.dao.GoalDAO;
+import org.taskstodo.exception.ServiceException;
 import org.taskstodo.model.Goal;
 
 @Service
@@ -22,15 +23,23 @@ public class GoalServiceImpl implements GoalService {
   /* (non-Javadoc)
    * @see org.taskstodo.service.GoalService#addGoal(org.taskstodo.model.Goal)
    */
-  public ObjectId addGoal(Goal goal) {
-    return goalDAO.create(goal);
+  public ObjectId addGoal(Goal goal) throws ServiceException {
+    if (goal != null && goal.getUserId() != null) {
+      return goalDAO.create(goal);
+    } else {
+      throw new ServiceException("Invalid object! Object is null or has no reference to user!");
+    }
   }
 
   /* (non-Javadoc)
    * @see org.taskstodo.service.GoalService#updateGoal(org.taskstodo.model.Goal)
    */
-  public void updateGoal(Goal goal) {
-    goalDAO.update(goal);
+  public void updateGoal(Goal goal) throws ServiceException {
+    if (goal != null && goal.getUserId() != null) {
+      goalDAO.update(goal);
+    } else {
+      throw new ServiceException("Invalid object! Object is null or has no reference to user!");
+    }
   }
 
   /* (non-Javadoc)
@@ -51,16 +60,16 @@ public class GoalServiceImpl implements GoalService {
   /* (non-Javadoc)
    * @see org.taskstodo.service.GoalService#getGoals()
    */
-  public List<Goal> getGoals() {
-    return goalDAO.findAll();
+  public List<Goal> getGoals(ObjectId userId) {
+    return goalDAO.findAll(userId);
   }
-  
+
   /* (non-Javadoc)
-   * @see org.taskstodo.service.GoalService#getGoals(java.lang.String, org.springframework.data.domain.Sort.Direction)
+   * @see org.taskstodo.service.GoalService#getGoalsOrderedBy(java.lang.String, java.lang.String, org.springframework.data.domain.Sort.Direction)
    */
   @Override
-  public List<Goal> getGoalsOrderedBy(String field, Direction direction) {
-    return goalDAO.findAll(new Sort(new Order(direction, field)));
+  public List<Goal> getGoalsOrderedBy(ObjectId userId, String field, Direction direction) {
+    return goalDAO.findAll(userId, new Sort(new Order(direction, field)));
   }
   
   /* (non-Javadoc)

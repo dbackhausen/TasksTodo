@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Sort.Direction;
-import org.taskstodo.model.Link;
+import org.taskstodo.exception.ServiceException;
+import org.taskstodo.model.Bookmark;
+import org.taskstodo.model.History;
 import org.taskstodo.model.Note;
+import org.taskstodo.model.Tab;
 import org.taskstodo.model.Task;
 
 public interface TaskService {
@@ -20,34 +23,14 @@ public interface TaskService {
    * 
    * @return the identifier.
    */
-  public ObjectId addTask(Task task);
-  
-  /**
-   * Adds a sub task to a parent task.
-   * 
-   * @param parentId - the parent ID.
-   * @param subTask - the subtask.
-   * 
-   * @return the ID of the new subtask.
-   */
-  public ObjectId addSubTask(ObjectId parentId, Task subTask);
-  
-  /**
-   * Adds a sub task to a parent task.
-   * 
-   * @param parentId - the parent ID.
-   * @param subTask - the subtask.
-   * 
-   * @return the ID of the new subtask.
-   */
-  public ObjectId addSubTask(String parentId, Task subTask);
+  public ObjectId addTask(Task task) throws ServiceException;
   
   /**
    * Updates an existing task.
    * 
    * @param task - the task.
    */
-  public void updateTask(Task task);
+  public void updateTask(Task task) throws ServiceException;
   
   /**
    * Returns a given task by its identifier.
@@ -145,8 +128,7 @@ public interface TaskService {
    * @param id - the goal Id.
    */
   public void deleteTasksByGoal(ObjectId id);
-  
-  
+    
   /////////////////////////////////////////////////////////////////////////////
   // NOTE                                                                    //
   /////////////////////////////////////////////////////////////////////////////
@@ -160,14 +142,14 @@ public interface TaskService {
    * 
    * @return the identifier.
    */
-  public ObjectId addNote(ObjectId taskId, Note note);
+  public ObjectId addNote(Note note) throws ServiceException;
   
   /**
    * Updates an existing note.
    * 
    * @param note - the note.
    */
-  public void updateNote(Note note);
+  public void updateNote(Note note) throws ServiceException;
   
   /**
    * Returns a given note by its identifier.
@@ -193,49 +175,137 @@ public interface TaskService {
   public void deleteNote(ObjectId id);
   
   /////////////////////////////////////////////////////////////////////////////
-  // LINK                                                                    //
+  // BOOKMARKS                                                               //
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Adds a new link for a task.
+   * Adds a new bookmark for a task.
    * 
    * @param taskId - the task identifier.
    * 
-   * @param link - the link.
+   * @param bookmark - the bookmark.
    * 
    * @return the identifier.
    */
-  public ObjectId addLink(ObjectId taskId, Link link);
+  public ObjectId addBookmark(Bookmark bookmark) throws ServiceException;
   
   /**
-   * Updates an existing link.
+   * Updates an existing bookmark.
    * 
-   * @param link - the link.
+   * @param bookmark - the bookmark.
    */
-  public void updateLink(Link link);
+  public void updateBookmark(Bookmark bookmark) throws ServiceException;
   
   /**
-   * Returns a given link by its identifier.
+   * Returns a given bookmark by its identifier.
    * 
    * @param id - the identifier.
    * 
-   * @return the link.
+   * @return the bookmark.
    */
-  public Link getLink(ObjectId id);
+  public Bookmark getBookmark(ObjectId id);
   
   /**
-   * Returns all links for a task.
+   * Returns all bookmarks for a task.
    * 
-   * @return the links.
+   * @return the bookmarks.
    */
-  public List<Link> getLinks(ObjectId taskId);
+  public List<Bookmark> getBookmarks(ObjectId taskId);
   
   /**
-   * Deletes a given link by its identifier.
+   * Deletes a given bookmark by its identifier.
    * 
    * @param id - the identifier.
    */
-  public void deleteLink(ObjectId id);
+  public void deleteBookmark(ObjectId id);
 
+  /////////////////////////////////////////////////////////////////////////////
+  // TABS                                                                    //
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Adds a new tab for a task.
+   * 
+   * @param taskId - the task identifier.
+   * 
+   * @param tab - the tab.
+   * 
+   * @return the identifier.
+   */
+  public ObjectId addTab(Tab tab) throws ServiceException;
   
+  /**
+   * Updates an existing tab.
+   * 
+   * @param bookmark - the tab.
+   */
+  public void updateTab(Tab tab) throws ServiceException;
+  
+  /**
+   * Returns a given tab by its identifier.
+   * 
+   * @param id - the identifier.
+   * 
+   * @return the tab.
+   */
+  public Tab getTab(ObjectId id);
+  
+  /**
+   * Returns all tabs for a task.
+   * 
+   * @return the tabs.
+   */
+  public List<Tab> getTabs(ObjectId taskId);
+  
+  /**
+   * Deletes a given tab by its identifier.
+   * 
+   * @param id - the identifier.
+   */
+  public void deleteTab(ObjectId id);
+  
+  /////////////////////////////////////////////////////////////////////////////
+  // HISTORY                                                                 //
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Adds a new history for a task.
+   * 
+   * @param taskId - the task identifier.
+   * 
+   * @param bookmark - the history.
+   * 
+   * @return the identifier.
+   */
+  public ObjectId addHistory(History history) throws ServiceException;
+  
+  /**
+   * Updates an existing history.
+   * 
+   * @param history - the history.
+   */
+  public void updateHistory(History history) throws ServiceException;
+  
+  /**
+   * Returns a given history by its identifier.
+   * 
+   * @param id - the identifier.
+   * 
+   * @return the history.
+   */
+  public History getHistory(ObjectId id);
+  
+  /**
+   * Returns all history for a task.
+   * 
+   * @return the history.
+   */
+  public List<History> getHistories(ObjectId taskId);
+  
+  /**
+   * Deletes a given history by its identifier.
+   * 
+   * @param id - the identifier.
+   */
+  public void deleteHistory(ObjectId id);
 }

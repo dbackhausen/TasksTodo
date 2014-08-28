@@ -13,13 +13,13 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.taskstodo.exception.ServiceException;
-import org.taskstodo.model.Note;
+import org.taskstodo.model.Bookmark;
 import org.taskstodo.model.Task;
 import org.taskstodo.service.TaskService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/application-context.xml"})
-public class NoteTest {
+public class BookmarkTest {
   @Resource
   private TaskService taskService;
   
@@ -36,36 +36,41 @@ public class NoteTest {
   }
   
   @Test
-  public void manageNote() {
+  public void manageBookmark() {
     try {
-      // Create note and add to task
-      Note note = new Note();
-      note.setTaskId(taskId);
-      note.setBody("Lorem ipsum dolores");
-      ObjectId noteId = taskService.addNote(note);
-      Assert.assertNotNull(noteId);
+      // Create bookmark and add to task
+      Bookmark bookmark = new Bookmark();
+      bookmark.setTaskId(taskId);
+      bookmark.setTitle("Test Bookmark");
+      bookmark.setUrl("http://www.test.de");
       
-      // Read note and validate
-      note = null;
-      note = taskService.getNote(noteId);
-      Assert.assertNotNull(note);
-      Assert.assertEquals(note.getBody(), "Lorem ipsum dolores");
+      ObjectId linkId = taskService.addBookmark(bookmark);
+      Assert.assertNotNull(linkId);
       
-      // Update note
-      note.setBody("Test Test Test");
-      taskService.updateNote(note);
+      // Read bookmark and validate
+      bookmark = null;
+      bookmark = taskService.getBookmark(linkId);
+      Assert.assertNotNull(bookmark);
+      Assert.assertEquals(bookmark.getTitle(), "Test Bookmark");
+      Assert.assertEquals(bookmark.getUrl(), "http://www.test.de");
       
-      // Read note and validate
-      note = null;
-      note = taskService.getNote(noteId);
-      Assert.assertNotNull(note);
-      Assert.assertEquals(note.getBody(), "Test Test Test");
+      // Update bookmark
+      bookmark.setTitle("Eightbit");
+      bookmark.setUrl("http://www.eightbit.de");
+      taskService.updateBookmark(bookmark);
       
-      // Delete note and validate
-      taskService.deleteNote(note.getId());
-      note = null;
-      note = taskService.getNote(noteId);
-      Assert.assertNull(note);
+      // Read bookmark and validate
+      bookmark = null;
+      bookmark = taskService.getBookmark(linkId);
+      Assert.assertNotNull(bookmark);
+      Assert.assertEquals(bookmark.getTitle(), "Eightbit");
+      Assert.assertEquals(bookmark.getUrl(), "http://www.eightbit.de");
+      
+      // Delete bookmark and validate
+      taskService.deleteBookmark(bookmark.getId());
+      bookmark = null;
+      bookmark = taskService.getBookmark(linkId);
+      Assert.assertNull(bookmark);
     } catch (ServiceException e) {
       e.printStackTrace();
       Assert.assertTrue(false);

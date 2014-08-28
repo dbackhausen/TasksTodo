@@ -66,4 +66,12 @@ public class Goal extends BasicEntity {
       setModified(new Date());
     }
   }
+  
+  // --
+
+  @Override
+  public String toString() {
+    return "Goal [title=" + title + ", description=" + description
+        + ", userId=" + userId + "]";
+  }
 }

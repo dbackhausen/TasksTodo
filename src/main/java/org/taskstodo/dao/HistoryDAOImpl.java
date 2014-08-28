@@ -12,42 +12,42 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
-import org.taskstodo.model.Link;
+import org.taskstodo.model.History;
 
 @Repository
-public class LinkDAOImpl extends GenericDaoImpl<Link> implements LinkDAO {
+public class HistoryDAOImpl extends GenericDaoImpl<History> implements HistoryDAO {
   /* The Logger */
-  private static final Logger LOGGER = LoggerFactory.getLogger(LinkDAOImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(HistoryDAOImpl.class);
 
   @Autowired
   private MongoTemplate mongoTemplate;
   
-  public LinkDAOImpl() {
-    super(Link.class);
+  public HistoryDAOImpl() {
+    super(History.class);
   }
 
   /* (non-Javadoc)
-   * @see org.taskstodo.dao.LinkDAO#findByTask(org.bson.types.ObjectId)
+   * @see org.taskstodo.dao.HistoryDAO#findByTask(org.bson.types.ObjectId)
    */
   @Override
-  public List<Link> findByTask(ObjectId taskId) {
+  public List<History> findByTask(ObjectId taskId) {
     Query query = new Query();
     query.addCriteria(Criteria.where("taskId").is(taskId));
     query.with(new Sort(Direction.DESC, "created"));
-    List<Link> links = mongoTemplate.find(query, Link.class);
+    List<History> histories = mongoTemplate.find(query, History.class);
     
-    LOGGER.debug("Found " +  links.size() + " links for task " + taskId.toString());
+    LOGGER.debug("Found " +  histories.size() + " history entries for task " + taskId.toString());
     
-    return links;
+    return histories;
   }
   
   /* (non-Javadoc)
-   * @see org.taskstodo.dao.LinkDAO#deleteAllByTask(org.bson.types.ObjectId)
+   * @see org.taskstodo.dao.HistoryDAO#deleteAllByTask(org.bson.types.ObjectId)
    */
   @Override
   public void deleteAllByTask(ObjectId taskId) {
     Query query = new Query();
     query.addCriteria(Criteria.where("taskId").is(taskId));
-    mongoTemplate.remove(query, Link.class);
+    mongoTemplate.remove(query, History.class);
   }
 }

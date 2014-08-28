@@ -29,8 +29,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Task extends BasicEntity {
   private String title;
   private String description;
-  private ObjectId goal;
-  private ObjectId parentTask;
+  private ObjectId goalId;
+  private ObjectId parentId;
   private Date dueDate = null;
   private Date completedDate = null;
   private Date reminderDate = null;
@@ -71,20 +71,28 @@ public class Task extends BasicEntity {
     }
   }
 
-  public ObjectId getGoal() {
-    return goal;
+  public ObjectId getGoalId() {
+    return goalId;
   }
   
-  public void setGoal(ObjectId goal) {
-    this.goal = goal;
+  public String getGoalIdAsString() {
+    return goalId != null ? goalId.toString() : null;
   }
   
-  public ObjectId getParentTask() {
-    return parentTask;
+  public void setGoalId(ObjectId goalId) {
+    this.goalId = goalId;
   }
   
-  public void setParentTask(ObjectId parentTask) {
-    this.parentTask = parentTask;
+  public ObjectId getParentId() {
+    return parentId;
+  }
+  
+  public String getParentIdAsString() {
+    return parentId != null ? parentId.toString() : null;
+  }
+  
+  public void setParentId(ObjectId parentId) {
+    this.parentId = parentId;
   }
   
   public Date getDueDate() {

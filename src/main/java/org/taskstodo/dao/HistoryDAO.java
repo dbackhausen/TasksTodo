@@ -3,21 +3,21 @@ package org.taskstodo.dao;
 import java.util.List;
 
 import org.bson.types.ObjectId;
-import org.taskstodo.model.Link;
+import org.taskstodo.model.History;
 
-public interface LinkDAO extends GenericDao<Link> {
+public interface HistoryDAO extends GenericDao<History> {
 
   /**
-   * Returns the links for a given task.
+   * Returns the histories for a given task.
    * 
    * @param taskId - the task identifier.
    * 
-   * @return the links.
+   * @return the histories.
    */
-  List<Link> findByTask(ObjectId taskId);
+  List<History> findByTask(ObjectId taskId);
 
   /**
-   * Deletes all links by a given task.
+   * Deletes all histories by a given task.
    * 
    * @param taskId - the task identifier.
    */

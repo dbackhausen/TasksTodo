@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Sort.Direction;
+import org.taskstodo.exception.ServiceException;
 import org.taskstodo.model.Goal;
 
 public interface GoalService {
@@ -14,14 +15,14 @@ public interface GoalService {
    * 
    * @return the identifier.
    */
-  public ObjectId addGoal(Goal goal);
+  public ObjectId addGoal(Goal goal) throws ServiceException;
   
   /**
    * Updates an existing goal.
    * 
    * @param goal - the goal.
    */
-  public void updateGoal(Goal goal);
+  public void updateGoal(Goal goal) throws ServiceException;
   
   /**
    * Returns a given goal by its identifier.
@@ -44,18 +45,21 @@ public interface GoalService {
   /**
    * Returns all goals.
    * 
+   * @param userId - the user identifier.
+   *
    * @return the goals.
    */
-  public List<Goal> getGoals();
+  public List<Goal> getGoals(ObjectId userId);
   
   /**
    * Returns all goals ordered by attribute (asc or desc).
    * 
+   * @param userId - the user identifier.
    * @param field - the order field.
    * @param direction - the direction order.
    * @return the goals.
    */
-  public List<Goal> getGoalsOrderedBy(String field, Direction direction);
+  public List<Goal> getGoalsOrderedBy(ObjectId userId, String field, Direction direction);
   
   /**
    * Deletes a given goal by its identifier.

@@ -29,7 +29,7 @@ public class TaskDAOImpl extends GenericDaoImpl<Task> implements TaskDAO {
    */
   @Override
   public List<Task> findSubTasks(final ObjectId parentId) {
-    List<Task> subtasks = mongoTemplate.find(new Query(Criteria.where("parentTask").is(parentId)), Task.class);
+    List<Task> subtasks = mongoTemplate.find(new Query(Criteria.where("parentId").is(parentId)), Task.class);
     LOGGER.debug("Found " + (subtasks != null ? subtasks.size() : "0") + " subtasks for task " + parentId);
     return subtasks;
   }
@@ -39,7 +39,7 @@ public class TaskDAOImpl extends GenericDaoImpl<Task> implements TaskDAO {
    */
   @Override
   public List<Task> findAllByGoal(ObjectId goalId) {
-    List<Task> subtasks = mongoTemplate.find(new Query(Criteria.where("goal").is(goalId)), Task.class);
+    List<Task> subtasks = mongoTemplate.find(new Query(Criteria.where("goalId").is(goalId)), Task.class);
     LOGGER.debug("Found " + (subtasks != null ? subtasks.size() : "0") + " tasks for goal " + goalId);
     return subtasks;
   }

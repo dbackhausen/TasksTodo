@@ -34,6 +34,8 @@ public interface GenericDao<T> {
   /**
    * Returns all entities sorted by a given option.
    * 
+   * @param sort - the sort order.
+   * 
    * @return all entities.
    */
   public List<T> findAll(Sort sort);

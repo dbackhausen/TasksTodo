@@ -202,8 +202,8 @@
             TAB: LINKS
             -->
           <div id="links" class="tab-pane fade">
-            <button id="new-link-button" data-bind="click: newLink" class="btn btn-primary btn-sm"><spring:message code="button.link.add" /></button>
-            <form id="new-link-form" data-bind="submit: addLink">
+            <button id="new-link-button" data-bind="click: newBookmark" class="btn btn-primary btn-sm"><spring:message code="button.link.add" /></button>
+            <form id="new-link-form" data-bind="submit: addBookmark">
               <div class="row">
                 <div class="form-group col-md-6">
                   <label for="input-new-link-title">URL</label>
@@ -219,7 +219,7 @@
                 <textarea id="input-new-link-description" class="form-control" placeholder="Some optional description"></textarea>
               </div>
               <button type="submit" class="btn btn-primary btn-sm"><spring:message code="button.save" /></button>
-              <button data-bind="click: cancelNewLink" class="btn btn-default btn-sm"><spring:message code="button.cancel" /></button>
+              <button data-bind="click: cancelNewBookmark" class="btn btn-default btn-sm"><spring:message code="button.cancel" /></button>
             </form>
             <hr />
             <ul data-bind="foreach: links" class="media-list">
@@ -236,10 +236,10 @@
                         <span data-bind="text: created | smartdate"></span>
                       </div>
                       <div class="item-edit-link">
-                        <a href="#" data-bind="click: $parent.editLink">edit</a>
+                        <a href="#" data-bind="click: $parent.editBookmark">edit</a>
                       </div>
                       <div class="item-delete-link">
-                        <a href="#" data-bind="click: $parent.deleteLink">delete</a>
+                        <a href="#" data-bind="click: $parent.deleteBookmark">delete</a>
                       </div>
                     </div>
                   </div>
@@ -256,8 +256,8 @@
                   <div class="form-group">
                     <textarea data-bind="value: description" class="form-control"></textarea>
                   </div>
-                  <button data-bind="click: $parent.saveLink" class="btn btn-primary btn-sm"><spring:message code="button.save" /></button>
-                  <button data-bind="click: $parent.cancelEditLink" class="btn btn-default btn-sm"><spring:message code="button.cancel" /></button>
+                  <button data-bind="click: $parent.saveBookmark" class="btn btn-primary btn-sm"><spring:message code="button.save" /></button>
+                  <button data-bind="click: $parent.cancelEditBookmark" class="btn btn-default btn-sm"><spring:message code="button.cancel" /></button>
                 </div>
               </li>
             </ul>

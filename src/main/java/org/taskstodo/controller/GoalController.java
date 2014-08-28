@@ -1,8 +1,11 @@
 package org.taskstodo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
@@ -20,43 +23,70 @@ import org.taskstodo.service.GoalService;
 @Controller
 @RequestMapping(value = "/goals")
 public class GoalController {
+  /* The Logger */
+  private static final Logger LOGGER = LoggerFactory.getLogger(GoalController.class);
+  
   @Autowired
   private GoalService goalService;
 
   // --
   
-  @RequestMapping(value = "/api/create/{userId}", method = RequestMethod.POST, 
+  @RequestMapping(value = "/api/create/", method = RequestMethod.POST, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody Goal addGoal(@PathVariable ObjectId userId, @RequestBody Goal goal) {
-    goal.setUserId(userId);
-    ObjectId id = goalService.addGoal(goal);
-    return goalService.getGoal(id);
+  public @ResponseBody Goal addGoal(@RequestBody Goal goal) {
+    if (goal != null) {
+      try {
+        ObjectId id = goalService.addGoal(goal); 
+        return goalService.getGoal(id);
+      } catch (Exception e) {
+        LOGGER.error(e.getMessage(), e);
+      }
+    }
+    
+    return null;
   }
   
-  @RequestMapping(value = "/api/update/{goalId}", method = RequestMethod.PUT, 
+  @RequestMapping(value = "/api/update/", method = RequestMethod.PUT, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody Goal updateGoal(@PathVariable ObjectId goalId, @RequestBody Goal goal) {
-    Goal g = goalService.getGoal(goalId);
-    g.setTitle(goal.getTitle());
-    g.setDescription(goal.getDescription());
-    goalService.updateGoal(g);
+  public @ResponseBody Goal updateGoal(@RequestBody Goal goal) {
+    if (goal != null) {
+      try {
+        Goal g = goalService.getGoal(goal.getId());
+        g.setTitle(goal.getTitle());
+        g.setDescription(goal.getDescription());
+        g.setUserId(goal.getUserId());
+        goalService.updateGoal(g);
+        
+        return goalService.getGoal(goal.getId());
+      } catch (Exception e) {
+        LOGGER.error(e.getMessage(), e);
+      }
+    }
     
-    return goalService.getGoal(goalId);
+    return null;
   }
 
   @RequestMapping(value = "/api/delete/{goalId}", method = RequestMethod.DELETE)
   public @ResponseStatus(value = HttpStatus.NO_CONTENT) void deleteGoal(@PathVariable ObjectId goalId) {
     goalService.deleteGoal(goalId, true);
   }
-  
+
+  @RequestMapping(value = "/api/delete/{goalId}", method = RequestMethod.POST)
+  public @ResponseStatus(value = HttpStatus.NO_CONTENT) void deleteGoalByPost(@PathVariable ObjectId goalId) {
+    goalService.deleteGoal(goalId, true);
+  }
   
   @RequestMapping(value = "/api/read/{goalId}", method = RequestMethod.GET)
   public @ResponseBody Goal getGoal(@PathVariable("goalId") ObjectId goalId) {
     return goalService.getGoal(goalId);
   }
   
-  @RequestMapping(value = "/api/list/", method = RequestMethod.GET)
-  public @ResponseBody List<Goal> getAllGoals() {
-    return goalService.getGoalsOrderedBy("modified", Direction.DESC);
+  @RequestMapping(value = "/api/list/{userId}", method = RequestMethod.GET)
+  public @ResponseBody List<Goal> getAllGoals(@PathVariable("userId") ObjectId userId) {
+    if (userId != null) {
+      return goalService.getGoalsOrderedBy(userId, "modified", Direction.DESC);
+    }
+    
+    return new ArrayList<Goal>(0);
   }
 }

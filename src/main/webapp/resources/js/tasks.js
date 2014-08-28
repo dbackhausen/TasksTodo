@@ -37,7 +37,7 @@ $(document).ready(function() {
       loadNotes();
       
       // load all links of selected task
-      loadLinks();
+      loadBookmarks();
       
       // load all file of selected task
       loadFiles();
@@ -137,42 +137,42 @@ $(document).ready(function() {
     
     self.links = ko.observableArray();
     
-    self.newLink = function(data) {
+    self.newBookmark = function(data) {
       $('#new-link-button').toggle();
       $('#new-link-form').fadeToggle("fast");
     };
     
-    self.cancelNewLink = function(data) {
+    self.cancelNewBookmark = function(data) {
       $('#new-link-button').toggle();
       $('#new-link-form').toggle();
       $('#new-link-form input').val(null);
       $('#new-link-form textarea').val(null);
     };
     
-    self.addLink = function(data) {
-      addLink(data);
+    self.addBookmark = function(data) {
+      addBookmark(data);
       $('#new-link-button').toggle();
       $('#new-link-form').toggle();
     };
     
-    self.editLink = function(data) {
+    self.editBookmark = function(data) {
       $('#new-link-button').toggle();
       $('#new-link-form').toggle();
       $('#'+data.idAsString+' .inline-view').toggle();
       $('#'+data.idAsString+' .inline-edit').toggle();
     };
 
-    self.cancelEditLink = function(data) {
+    self.cancelEditBookmark = function(data) {
       $('#'+data.idAsString+' .inline-view').toggle();
       $('#'+data.idAsString+' .inline-edit').toggle();
     };
     
-    self.saveLink = function(data) {
-      saveLink(data);
+    self.saveBookmark = function(data) {
+      saveBookmark(data);
     };
     
-    self.deleteLink = function(data) {
-      deleteLink(data);
+    self.deleteBookmark = function(data) {
+      deleteBookmark(data);
     };
     
     // --
@@ -496,7 +496,7 @@ $(document).ready(function() {
   /**
    * Load all links regarding to the selected task.
    */
-  function loadLinks() {
+  function loadBookmarks() {
     $.ajax({
       url: "/taskstodo/links/api/list/"+taskModel.selectedTask().idAsString,
       type: "GET",
@@ -525,7 +525,7 @@ $(document).ready(function() {
   /**
    * Adds a new note to the task.
    */
-  function addLink(form) {
+  function addBookmark(form) {
     var url = $("#input-new-link-url").val();
     var title = $("#input-new-link-title").val();
     var description = $("#input-new-link-description").val();
@@ -563,7 +563,7 @@ $(document).ready(function() {
   /**
    * Saves changes to a link.
    */
-  function saveLink(link) {
+  function saveBookmark(link) {
     var url = link.url;
     var title = link.title;
     var description = link.description;
@@ -582,10 +582,10 @@ $(document).ready(function() {
         },
         success: function(data) {
           if (console && console.log) {
-            console.log("Link " + link.idAsString + " successfully updated!");
+            console.log("Bookmark " + link.idAsString + " successfully updated!");
           }
           
-          loadLinks();
+          loadBookmarks();
           // TODO Deactivate edit mode of this note!
         },
         error: function(jqXHR, textStatus, errorThrown) {
@@ -600,7 +600,7 @@ $(document).ready(function() {
   /**
    * Deletes a given link.
    */
-  function deleteLink(link) {
+  function deleteBookmark(link) {
     $.ajax({
       url: "/taskstodo/links/api/delete/" + link.idAsString,
       type: "DELETE",
@@ -611,7 +611,7 @@ $(document).ready(function() {
       },
       success: function(data) {
         if (console && console.log) {
-          console.log("Link " + link.idAsString + " successfully deleted!");
+          console.log("Bookmark " + link.idAsString + " successfully deleted!");
         }
         
         // Remove the link from the view model

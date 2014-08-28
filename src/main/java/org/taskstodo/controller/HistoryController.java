@@ -16,27 +16,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.taskstodo.model.Note;
+import org.taskstodo.model.History;
 import org.taskstodo.service.TaskService;
 
 @Controller
-@RequestMapping(value = "/notes")
-public class NoteController {
+@RequestMapping(value = "/history")
+public class HistoryController {
   /* The Logger */
-  private static final Logger LOGGER = LoggerFactory.getLogger(NoteController.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(HistoryController.class);
   
   @Autowired
   private TaskService taskService;
-
+  
   // --
 
   @RequestMapping(value = "/api/create/", method = RequestMethod.POST, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody Note create(@RequestBody Note note) {
-    if (note != null) {
+  public @ResponseBody History create(@RequestBody History history) {
+    if (history != null) {
       try {
-        ObjectId id = taskService.addNote(note);
-        return taskService.getNote(id);
+        ObjectId id = taskService.addHistory(history);
+        return taskService.getHistory(id);
       } catch (Exception e) {
         LOGGER.error(e.getMessage(), e);
       }
@@ -47,14 +47,18 @@ public class NoteController {
   
   @RequestMapping(value = "/api/update/", method = RequestMethod.PUT, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody Note update(@RequestBody Note note) {
-    if (note != null) {
+  public @ResponseBody History update(@RequestBody History history) {
+    if (history != null) {
       try {
-        Note n = taskService.getNote(note.getId());
-        n.setBody(note.getBody());
-        taskService.updateNote(n);
+        History h = taskService.getHistory(history.getId());
+        h.setUrl(history.getUrl());
+        h.setTitle(history.getTitle());
+        h.setDescription(history.getDescription());
+        h.setThumbnail(history.getThumbnail());
+        h.setRelevance(history.getRelevance());
+        taskService.updateHistory(h);
         
-        return taskService.getNote(note.getId());
+        return taskService.getHistory(history.getId());
       } catch (Exception e) {
         LOGGER.error(e.getMessage(), e);
       }
@@ -63,24 +67,24 @@ public class NoteController {
     return null;
   }
 
-  @RequestMapping(value = "/api/delete/{noteId}", method = RequestMethod.DELETE)
-  public @ResponseStatus(value = HttpStatus.NO_CONTENT) void delete(@PathVariable ObjectId noteId) {
-    taskService.deleteNote(noteId);
+  @RequestMapping(value = "/api/delete/{historyId}", method = RequestMethod.DELETE)
+  public @ResponseStatus(value = HttpStatus.NO_CONTENT) void delete(@PathVariable ObjectId historyId) {
+    taskService.deleteHistory(historyId);
   }
   
-  @RequestMapping(value = "/api/delete/{noteId}", method = RequestMethod.POST)
-  public @ResponseStatus(value = HttpStatus.NO_CONTENT) void deleteByPost(@PathVariable ObjectId noteId) {
-    taskService.deleteNote(noteId);
+  @RequestMapping(value = "/api/delete/{historyId}", method = RequestMethod.POST)
+  public @ResponseStatus(value = HttpStatus.NO_CONTENT) void deleteByPost(@PathVariable ObjectId historyId) {
+    taskService.deleteHistory(historyId);
   }
   
   @RequestMapping(value = "/api/list/{taskId}", method = RequestMethod.GET)
-  public @ResponseBody List<Note> list(@PathVariable("taskId") ObjectId taskId) {
-    List<Note> notes = new ArrayList<Note>();
-
+  public @ResponseBody List<History> list(@PathVariable("taskId") ObjectId taskId) {
+    List<History> histories = new ArrayList<History>();
+    
     if (taskId != null) {
-      notes = taskService.getNotes(taskId);
+      histories = taskService.getHistories(taskId);
     }
-
-    return notes;
+    
+    return histories;
   }
 }

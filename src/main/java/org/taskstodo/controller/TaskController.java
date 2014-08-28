@@ -3,6 +3,8 @@ package org.taskstodo.controller;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
@@ -20,52 +22,54 @@ import org.taskstodo.service.TaskService;
 @Controller
 @RequestMapping(value = "/tasks")
 public class TaskController {
+  /* The Logger */
+  private static final Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
+  
   @Autowired
   private TaskService taskService;
 
   // --
   
-  @RequestMapping(value = "/api/create/{goalId}", method = RequestMethod.POST, 
+  @RequestMapping(value = "/api/create/", method = RequestMethod.POST, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody Task addTask(@PathVariable ObjectId goalId, @RequestBody Task task) {
-    task.setGoal(goalId);
-    ObjectId id = taskService.addTask(task);
-    return taskService.getTask(id);
-  }
-  
-  @RequestMapping(value = "/api/create/subtask/{parentId}", method = RequestMethod.POST, 
-      produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody Task addSubtask(@PathVariable ObjectId parentId, @RequestBody Task task) {
-    Task parent = taskService.getTask(parentId);
-    
-    if (parent != null) {
-      int counter = taskService.getSubTaskCount(parentId) + 1;
-      task.setParentTask(parentId);
-      task.setPosition(counter);
-      ObjectId id = taskService.addTask(task);
-      return taskService.getTask(id);
+  public @ResponseBody Task addTask(@RequestBody Task task) {
+    if (task != null) {
+      try {
+        ObjectId id = taskService.addTask(task); 
+        return taskService.getTask(id);
+      } catch (Exception e) {
+        LOGGER.error(e.getMessage(), e);
+      }
     }
-
+    
     return null;
   }
   
-  @RequestMapping(value = "/api/update/{taskId}", method = RequestMethod.PUT, 
+  @RequestMapping(value = "/api/update/", method = RequestMethod.PUT, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody Task updateTask(@PathVariable ObjectId taskId, @RequestBody Task task) {
-    Task t = taskService.getTask(taskId);
-    t.setTitle(task.getTitle());
-    t.setDescription(task.getDescription());
-    t.setGoal(task.getGoal());
-    t.setParentTask(task.getParentTask());
-    t.setDueDate(task.getDueDate());
-    t.setCompletedDate(task.getCompletedDate());
-    t.setReminderDate(task.getReminderDate());
-    t.setUrgency(task.getUrgency());
-    t.setPriority(task.getPriority());
-    t.setPosition(task.getPosition());
-    taskService.updateTask(t);
+  public @ResponseBody Task updateTask(@RequestBody Task task) {
+    if (task != null) {
+      try {
+        Task t = taskService.getTask(task.getId());
+        t.setTitle(task.getTitle());
+        t.setDescription(task.getDescription());
+        t.setGoalId(task.getGoalId());
+        t.setParentId(task.getParentId());
+        t.setDueDate(task.getDueDate());
+        t.setCompletedDate(task.getCompletedDate());
+        t.setReminderDate(task.getReminderDate());
+        t.setUrgency(task.getUrgency());
+        t.setPriority(task.getPriority());
+        t.setPosition(task.getPosition());
+        taskService.updateTask(t);
+        
+        return taskService.getTask(task.getId());
+      } catch (Exception e) {
+        LOGGER.error(e.getMessage(), e);
+      }
+    }
     
-    return taskService.getTask(taskId);
+    return null;
   }
 
   @RequestMapping(value = "/api/delete/{taskId}", method = RequestMethod.DELETE)

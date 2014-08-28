@@ -32,7 +32,7 @@
 
   <!-- ================= Start of PERSISTENCE DEFINITIONS ================= -->
 
-  <!-- Link the ext. config. file -->
+  <!-- Bookmark the ext. config. file -->
   <context:property-placeholder location="classpath:application.properties" />
 
   <mongo:db-factory id="mongoDbFactory" dbname="${database.name}" />

@@ -16,27 +16,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.taskstodo.model.Note;
+import org.taskstodo.model.Tab;
 import org.taskstodo.service.TaskService;
 
 @Controller
-@RequestMapping(value = "/notes")
-public class NoteController {
+@RequestMapping(value = "/tabs")
+public class TabController {
   /* The Logger */
-  private static final Logger LOGGER = LoggerFactory.getLogger(NoteController.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TabController.class);
   
   @Autowired
   private TaskService taskService;
-
+  
   // --
 
   @RequestMapping(value = "/api/create/", method = RequestMethod.POST, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody Note create(@RequestBody Note note) {
-    if (note != null) {
+  public @ResponseBody Tab create(@RequestBody Tab tab) {
+    if (tab != null) {
       try {
-        ObjectId id = taskService.addNote(note);
-        return taskService.getNote(id);
+        ObjectId id = taskService.addTab(tab);
+        return taskService.getTab(id);
       } catch (Exception e) {
         LOGGER.error(e.getMessage(), e);
       }
@@ -47,14 +47,17 @@ public class NoteController {
   
   @RequestMapping(value = "/api/update/", method = RequestMethod.PUT, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody Note update(@RequestBody Note note) {
-    if (note != null) {
+  public @ResponseBody Tab update(@RequestBody Tab tab) {
+    if (tab != null) {
       try {
-        Note n = taskService.getNote(note.getId());
-        n.setBody(note.getBody());
-        taskService.updateNote(n);
+        Tab t = taskService.getTab(tab.getId());
+        t.setTabId(tab.getTabId());
+        t.setTitle(tab.getTitle());
+        t.setUrl(tab.getUrl());
+        t.setThumbnail(tab.getThumbnail());
+        taskService.updateTab(t);
         
-        return taskService.getNote(note.getId());
+        return taskService.getTab(tab.getId());
       } catch (Exception e) {
         LOGGER.error(e.getMessage(), e);
       }
@@ -63,24 +66,22 @@ public class NoteController {
     return null;
   }
 
-  @RequestMapping(value = "/api/delete/{noteId}", method = RequestMethod.DELETE)
-  public @ResponseStatus(value = HttpStatus.NO_CONTENT) void delete(@PathVariable ObjectId noteId) {
-    taskService.deleteNote(noteId);
-  }
-  
-  @RequestMapping(value = "/api/delete/{noteId}", method = RequestMethod.POST)
-  public @ResponseStatus(value = HttpStatus.NO_CONTENT) void deleteByPost(@PathVariable ObjectId noteId) {
-    taskService.deleteNote(noteId);
+  @RequestMapping(value = "/api/delete/", method = RequestMethod.POST)
+  public @ResponseStatus(value = HttpStatus.NO_CONTENT) void delete(@PathVariable Tab tab) {
+    if (tab != null) {
+      LOGGER.debug("Delete tab: " + tab.toString());
+//      taskService.deleteTab(tab);
+    }
   }
   
   @RequestMapping(value = "/api/list/{taskId}", method = RequestMethod.GET)
-  public @ResponseBody List<Note> list(@PathVariable("taskId") ObjectId taskId) {
-    List<Note> notes = new ArrayList<Note>();
-
+  public @ResponseBody List<Tab> read(@PathVariable("taskId") ObjectId taskId) {
+    List<Tab> bookmarks = new ArrayList<Tab>();
+    
     if (taskId != null) {
-      notes = taskService.getNotes(taskId);
+      bookmarks = taskService.getTabs(taskId);
     }
-
-    return notes;
+    
+    return bookmarks;
   }
 }

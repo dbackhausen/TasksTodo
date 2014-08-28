@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.taskstodo.exception.ServiceException;
 import org.taskstodo.model.Task;
 import org.taskstodo.service.TaskService;
 
@@ -50,8 +51,13 @@ public class FileTest {
     task.setUrgency(2);
     
     // Add the new task
-    taskId = taskService.addTask(task);
-    Assert.assertNotNull(taskId);
+    try {
+      taskId = taskService.addTask(task);
+      Assert.assertNotNull(taskId);
+    } catch (ServiceException e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
     
     // Load created task
     task = null;

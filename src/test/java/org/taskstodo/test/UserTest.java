@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.taskstodo.exception.ServiceException;
 import org.taskstodo.model.User;
 import org.taskstodo.service.UserService;
 
@@ -52,32 +53,42 @@ public class UserTest {
   
   @Test
   public void updateUser() {
-    // Load the user
-    User user = userService.getUser(userId);
-    Assert.assertNotNull(user);
-    Assert.assertEquals("daniel.backhausen@eightbit.de", user.getUsername());
-    Assert.assertEquals("test123", user.getPassword());
-    
-    // Update the user
-    user.setUsername("daniel.backhausen@eightbit.eu");
-    user.setPassword("123test456");
-    userService.updateUser(user);
-    
-    // Load the user
-    user = null;
-    user = userService.getUser(userId);
-    Assert.assertNotNull(user);
-    Assert.assertEquals("daniel.backhausen@eightbit.eu", user.getUsername());
-    Assert.assertEquals("123test456", user.getPassword());
+    try {
+      // Load the user
+      User user = userService.getUser(userId);
+      Assert.assertNotNull(user);
+      Assert.assertEquals("daniel.backhausen@eightbit.de", user.getUsername());
+      Assert.assertEquals("test123", user.getPassword());
+      
+      // Update the user
+      user.setUsername("daniel@eightbit.eu");
+      user.setPassword("test");
+      userService.updateUser(user);
+      
+      // Load the user
+      user = null;
+      user = userService.getUser(userId);
+      Assert.assertNotNull(user);
+      Assert.assertEquals("daniel@eightbit.eu", user.getUsername());
+      Assert.assertEquals("test", user.getPassword());
+    } catch (ServiceException e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
   }
   
   // --
   
   private void create() {
-    User user = new User();
-    user.setUsername("daniel.backhausen@eightbit.de");
-    user.setPassword("test123");
-    userId = userService.addUser(user);
+    try {
+      User user = new User();
+      user.setUsername("daniel.backhausen@eightbit.de");
+      user.setPassword("test123");
+      userId = userService.addUser(user);
+    } catch (ServiceException e) {
+      e.printStackTrace();
+      Assert.assertTrue(false);
+    }
   }
   
   private void delete() {

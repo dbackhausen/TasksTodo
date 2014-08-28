@@ -3,10 +3,10 @@ package org.taskstodo.service;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.taskstodo.exception.ServiceException;
 import org.taskstodo.model.User;
 
 public interface UserService {
-  
   /**
    * Adds a new user.
    * 
@@ -14,14 +14,14 @@ public interface UserService {
    * 
    * @return the identifier.
    */
-  public ObjectId addUser(User user);
+  public ObjectId addUser(User user) throws ServiceException;
   
   /**
    * Updates an existing user.
    * 
    * @param user - the user.
    */
-  public void updateUser(User user);
+  public void updateUser(User user) throws ServiceException;
   
   /**
    * Returns a given user by its identifier.
@@ -31,6 +31,15 @@ public interface UserService {
    * @return the user.
    */
   public User getUser(ObjectId id);
+  
+  /**
+   * Returns a given user by its username.
+   * 
+   * @param username - the username.
+   * 
+   * @return the user.
+   */
+  public User getUserByUsername(String username);
   
   /**
    * Returns all users.
