@@ -27,7 +27,7 @@ public class GoalServiceImpl implements GoalService {
     if (goal != null && goal.getUserId() != null) {
       return goalDAO.create(goal);
     } else {
-      throw new ServiceException("Invalid object! Object is null or has no reference to user!");
+      throw new ServiceException("Invalid object! Object is null or has no reference to parent object!");
     }
   }
 
@@ -38,7 +38,7 @@ public class GoalServiceImpl implements GoalService {
     if (goal != null && goal.getUserId() != null) {
       goalDAO.update(goal);
     } else {
-      throw new ServiceException("Invalid object! Object is null or has no reference to user!");
+      throw new ServiceException("Invalid object! Object is null or has no reference to parent object!");
     }
   }
 
@@ -91,5 +91,33 @@ public class GoalServiceImpl implements GoalService {
   @Override
   public void deleteGoal(String id, boolean cascade) {
     deleteGoal(new ObjectId(id), cascade);
+  }
+  
+  // --
+
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.GoalService#reorganize(org.taskstodo.model.Goal, int, org.bson.types.ObjectId)
+   */
+  public void reorganize(Goal goal, int prevPos, ObjectId userId) throws ServiceException {
+    List<Goal> goals = getGoalsOrderedBy(userId, "position", Direction.ASC);
+    
+    int position = goal.getPosition();
+    
+    for (Goal g : goals) {
+      if (!g.getId().toString().equals(goal.getId().toString())) {
+        if (goal.getPosition() < prevPos) { // goal has been moved to a higher position
+          if (g.getPosition() >= goal.getPosition()) {
+            position++;
+            g.setPosition(position);
+            updateGoal(g);
+          }
+        } else { // goal has been moved to a lower position
+          if (g.getPosition() > prevPos && g.getPosition() <= goal.getPosition()) {
+            g.setPosition(g.getPosition() - 1);
+            updateGoal(g);
+          }
+        }
+      }
+    }
   }
 }

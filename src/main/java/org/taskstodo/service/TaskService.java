@@ -63,16 +63,17 @@ public interface TaskService {
    * @param goalId - the goal ID.
    * @return the tasks.
    */
-  public List<Task> getTasksByGoal(ObjectId goalId);
+  public List<Task> getTasks(ObjectId goalId);
   
   /**
    * Returns all tasks by its goal.
    * 
+   * @param goalId - the goal id.
    * @param field - the order field.
    * @param direction - the direction order.
    * @return the tasks.
    */
-  public List<Task> getTasksOrderedBy(String field, Direction direction);
+  public List<Task> getTasksOrderedBy(ObjectId goalId, String field, Direction direction);
   
   /**
    * Returns all sub tasks of a given task.
@@ -125,10 +126,29 @@ public interface TaskService {
   /**
    * Deletes all tasks of a given goal.
    * 
-   * @param id - the goal Id.
+   * @param goalId - the goal Id.
    */
-  public void deleteTasksByGoal(ObjectId id);
-    
+  public void deleteTasksByGoal(ObjectId goalId);
+  
+  /**
+   * Reorganizes all tasks if level has been changed.
+   * 
+   * @param task - the task, which has been changed.
+   * @param prevLevel - the previous level of the goal.
+   * @throws ServiceException - Exception if save operation throws errors
+   */
+  public void reorganizeByLevel(Task task, int prevLevel) throws ServiceException;
+   
+  /**
+   * Reorganizes all tasks if position has been changed.
+   * 
+   * @param task - the task, which has been changed.
+   * @param prevPosition - the previous position of the goal.
+   * @throws ServiceException - Exception if save operation throws errors
+   */
+  public void reorganizeByPosition(Task task, int prevPosition) throws ServiceException;
+  
+  
   /////////////////////////////////////////////////////////////////////////////
   // NOTE                                                                    //
   /////////////////////////////////////////////////////////////////////////////

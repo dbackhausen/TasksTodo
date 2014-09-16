@@ -2,6 +2,7 @@ package org.taskstodo.controller;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,12 +83,14 @@ public class UserController {
   @RequestMapping(value = "/api/login/", method = RequestMethod.POST, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   public @ResponseBody User login(@RequestBody User user) {
-    User u = null;
-    
     if (user != null) {
-      u = userService.getUserByUsername(user.getUsername());
+      User u = userService.getUserByUsername(user.getUsername());
+      
+      if (StringUtils.equals(user.getPassword(), u.getPassword())) {
+        return u;
+      }
     }
     
-    return u;
+    return null;
   }
 }

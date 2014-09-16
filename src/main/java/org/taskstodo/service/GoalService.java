@@ -76,4 +76,14 @@ public interface GoalService {
    * @param cascade - cascade delete all subgoals
    */
   public void deleteGoal(String id, boolean cascade);
+  
+  /**
+   * Reorganizes all user goals when a position of one goal has been changed.
+   * 
+   * @param goal - the goal, which has been changed.
+   * @param prevPos - the previous position of the goal.
+   * @param userId - the id of the user.
+   * @throws ServiceException - Exception if save operation throws errors
+   */
+  public void reorganize(Goal goal, int prevPos, ObjectId userId) throws ServiceException;
 }

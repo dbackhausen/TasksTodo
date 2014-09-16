@@ -3,7 +3,9 @@ package org.taskstodo.model;
 import java.util.Date;
 
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.taskstodo.util.ObjectIdJsonSerializer;
 
 /**
  * The task, which is assigned to a goal and can be assigned to another task.
@@ -29,13 +31,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Task extends BasicEntity {
   private String title;
   private String description;
+  @JsonSerialize(using=ObjectIdJsonSerializer.class)
   private ObjectId goalId;
+  @JsonSerialize(using=ObjectIdJsonSerializer.class)
   private ObjectId parentId;
   private Date dueDate = null;
   private Date completedDate = null;
   private Date reminderDate = null;
   private int urgency;
   private int priority;
+  private int level = 0;
   private int position = 1;
   
   // --
@@ -75,20 +80,12 @@ public class Task extends BasicEntity {
     return goalId;
   }
   
-  public String getGoalIdAsString() {
-    return goalId != null ? goalId.toString() : null;
-  }
-  
   public void setGoalId(ObjectId goalId) {
     this.goalId = goalId;
   }
   
   public ObjectId getParentId() {
     return parentId;
-  }
-  
-  public String getParentIdAsString() {
-    return parentId != null ? parentId.toString() : null;
   }
   
   public void setParentId(ObjectId parentId) {
@@ -150,22 +147,36 @@ public class Task extends BasicEntity {
     }
   }
   
+  public int getLevel() {
+    return level;
+  }
+  
+  public void setLevel(int level) {
+    if (this.level != level) {
+      this.level = level;
+      setModified(new Date());
+    }
+  }
+  
   public int getPosition() {
     return position;
   }
   
   public void setPosition(int position) {
-    this.position = position;
+    if (this.position != position) {
+      this.position = position;
+      setModified(new Date());
+    }
   }
-  
+
   // --
 
   @Override
   public String toString() {
-    return "Task [id=" + getId() + ", title=" + title + ", description="
-        + description + ", dueDate=" + dueDate + ", completedDate="
-        + completedDate + ", reminderDate=" + reminderDate + ", urgency="
-        + urgency + ", priority=" + priority + ", created=" + getCreated()
-        + ", modified=" + getModified() + "]";
+    return "Task [title=" + title + ", description=" + description
+        + ", goalId=" + goalId + ", parentId=" + parentId + ", dueDate="
+        + dueDate + ", completedDate=" + completedDate + ", reminderDate="
+        + reminderDate + ", urgency=" + urgency + ", priority=" + priority
+        + ", level=" + level + ", position=" + position + "]";
   }
 }

@@ -6,6 +6,7 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -29,18 +30,34 @@ public class TaskDAOImpl extends GenericDaoImpl<Task> implements TaskDAO {
    */
   @Override
   public List<Task> findSubTasks(final ObjectId parentId) {
-    List<Task> subtasks = mongoTemplate.find(new Query(Criteria.where("parentId").is(parentId)), Task.class);
+    Query query = new Query(Criteria.where("parentId").is(parentId));
+    query.with(new Sort(Sort.Direction.ASC, "position"));
+    List<Task> subtasks = mongoTemplate.find(query, Task.class);
     LOGGER.debug("Found " + (subtasks != null ? subtasks.size() : "0") + " subtasks for task " + parentId);
     return subtasks;
   }
 
   /* (non-Javadoc)
-   * @see org.taskstodo.dao.TaskDAO#findAllByGoal(org.bson.types.ObjectId)
+   * @see org.taskstodo.dao.TaskDAO#findAll(org.bson.types.ObjectId)
    */
   @Override
-  public List<Task> findAllByGoal(ObjectId goalId) {
-    List<Task> subtasks = mongoTemplate.find(new Query(Criteria.where("goalId").is(goalId)), Task.class);
+  public List<Task> findAll(ObjectId goalId) {
+    Query query = new Query(Criteria.where("goalId").is(goalId));
+    query.with(new Sort(Sort.Direction.ASC, "position"));
+    List<Task> subtasks = mongoTemplate.find(query, Task.class);
     LOGGER.debug("Found " + (subtasks != null ? subtasks.size() : "0") + " tasks for goal " + goalId);
     return subtasks;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.taskstodo.dao.TaskDAO#findAll(org.bson.types.ObjectId, org.springframework.data.domain.Sort)
+   */
+  @Override
+  public List<Task> findAll(ObjectId goalId, Sort sort) {
+    Query query = Query.query(Criteria.where("goalId").is(goalId));
+    query.with(sort);
+    List<Task> goals = mongoTemplate.find(query, Task.class);
+    LOGGER.debug("Found " + (goals != null ? goals.size() : "0") + " tasks for goal " + goalId.toString());
+    return goals;
   }
 }

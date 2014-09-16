@@ -3,10 +3,13 @@ package org.taskstodo.model;
 import java.util.Date;
 
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.taskstodo.util.ObjectIdJsonSerializer;
 
 @Document
 public class Tab extends BasicEntity {
+  @JsonSerialize(using=ObjectIdJsonSerializer.class)
   private ObjectId taskId;
   private String tabId;
   private String title;

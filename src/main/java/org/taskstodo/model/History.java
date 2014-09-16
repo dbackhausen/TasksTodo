@@ -3,15 +3,19 @@ package org.taskstodo.model;
 import java.util.Date;
 
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.taskstodo.util.ObjectIdJsonSerializer;
 
 @Document
 public class History extends BasicEntity {
+  @JsonSerialize(using=ObjectIdJsonSerializer.class)
   private ObjectId taskId;
   private String title;
   private String url;
   private String description;
   private String thumbnail;
+  private String content;
   private int relevance = 0;
   
   // --
@@ -74,6 +78,14 @@ public class History extends BasicEntity {
     this.thumbnail = thumbnail;
   }
 
+  public String getContent() {
+    return content;
+  }
+  
+  public void setContent(String content) {
+    this.content = content;
+  }
+  
   public int getRelevance() {
     return relevance;
   }

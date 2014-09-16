@@ -3,16 +3,18 @@ package org.taskstodo.model;
 import java.util.Date;
 
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.mongodb.morphia.annotations.Entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.taskstodo.util.ObjectIdJsonSerializer;
 
 @Entity
 @Document
 public abstract class BasicEntity {
   @Id
+  @JsonSerialize(using=ObjectIdJsonSerializer.class)
   private ObjectId id;
-  private String identifier;
   private Date created = new Date();
   private Date modified;
   
@@ -21,18 +23,9 @@ public abstract class BasicEntity {
   public ObjectId getId() {
     return id;
   }
-  
-  public String getIdAsString() {
-    return id != null ? id.toString() : null;
-  }
-  
+
   public void setId(ObjectId id) {
     this.id = id;
-    this.identifier = id.toString();
-  }
-  
-  public String getIdentifier() {
-    return identifier;
   }
   
   public Date getCreated() {

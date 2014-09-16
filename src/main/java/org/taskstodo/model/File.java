@@ -3,8 +3,11 @@ package org.taskstodo.model;
 import java.util.Date;
 
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.taskstodo.util.ObjectIdJsonSerializer;
 
 public class File extends BasicEntity {
+  @JsonSerialize(using=ObjectIdJsonSerializer.class)
   private ObjectId taskId;
   private String filename;
   private long length;

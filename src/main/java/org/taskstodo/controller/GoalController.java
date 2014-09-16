@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.taskstodo.exception.GoalNotFoundException;
 import org.taskstodo.model.Goal;
 import org.taskstodo.service.GoalService;
 
@@ -52,12 +53,22 @@ public class GoalController {
     if (goal != null) {
       try {
         Goal g = goalService.getGoal(goal.getId());
-        g.setTitle(goal.getTitle());
-        g.setDescription(goal.getDescription());
-        g.setUserId(goal.getUserId());
-        goalService.updateGoal(g);
         
-        return goalService.getGoal(goal.getId());
+        if (g != null) {
+          g.setTitle(goal.getTitle());
+          g.setDescription(goal.getDescription());
+          g.setUserId(goal.getUserId());
+          g.setUrgency(goal.getUrgency());
+          g.setPriority(goal.getPriority());
+          g.setLevel(goal.getLevel());
+          g.setPosition(goal.getPosition());
+          
+          goalService.updateGoal(g);
+  
+          return goalService.getGoal(goal.getId());
+        } else {
+          throw new GoalNotFoundException();
+        }
       } catch (Exception e) {
         LOGGER.error(e.getMessage(), e);
       }
@@ -84,7 +95,7 @@ public class GoalController {
   @RequestMapping(value = "/api/list/{userId}", method = RequestMethod.GET)
   public @ResponseBody List<Goal> getAllGoals(@PathVariable("userId") ObjectId userId) {
     if (userId != null) {
-      return goalService.getGoalsOrderedBy(userId, "modified", Direction.DESC);
+      return goalService.getGoalsOrderedBy(userId, "position", Direction.ASC);
     }
     
     return new ArrayList<Goal>(0);

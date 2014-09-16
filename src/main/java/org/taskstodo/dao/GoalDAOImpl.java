@@ -46,7 +46,8 @@ public class GoalDAOImpl extends GenericDaoImpl<Goal> implements GoalDAO {
     Query query = Query.query(Criteria.where("userId").is(userId));
     query.with(sort);
     List<Goal> goals = mongoTemplate.find(query, Goal.class);
-    LOGGER.debug("Found " + (goals != null ? goals.size() : "0") + " goals from user " + userId.toString());
+    LOGGER.info("Found " + (goals != null ? goals.size() : "0") + " goals from user " + userId.toString());
+    
     return goals;
   }
 }

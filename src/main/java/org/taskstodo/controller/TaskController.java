@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.taskstodo.exception.TaskNotFoundException;
 import org.taskstodo.model.Task;
 import org.taskstodo.service.TaskService;
 
@@ -51,19 +52,26 @@ public class TaskController {
     if (task != null) {
       try {
         Task t = taskService.getTask(task.getId());
-        t.setTitle(task.getTitle());
-        t.setDescription(task.getDescription());
-        t.setGoalId(task.getGoalId());
-        t.setParentId(task.getParentId());
-        t.setDueDate(task.getDueDate());
-        t.setCompletedDate(task.getCompletedDate());
-        t.setReminderDate(task.getReminderDate());
-        t.setUrgency(task.getUrgency());
-        t.setPriority(task.getPriority());
-        t.setPosition(task.getPosition());
-        taskService.updateTask(t);
         
-        return taskService.getTask(task.getId());
+        if (t != null) {
+          t.setTitle(task.getTitle());
+          t.setDescription(task.getDescription());
+          t.setGoalId(task.getGoalId());
+          t.setParentId(task.getParentId());
+          t.setDueDate(task.getDueDate());
+          t.setCompletedDate(task.getCompletedDate());
+          t.setReminderDate(task.getReminderDate());
+          t.setUrgency(task.getUrgency());
+          t.setPriority(task.getPriority());
+          t.setLevel(task.getLevel());
+          t.setPosition(task.getPosition());
+
+          taskService.updateTask(task);
+          
+          return taskService.getTask(task.getId());
+        } else {
+          throw new TaskNotFoundException();
+        }
       } catch (Exception e) {
         LOGGER.error(e.getMessage(), e);
       }
@@ -91,14 +99,9 @@ public class TaskController {
   public @ResponseBody List<Task> getSubTasks(@PathVariable("parentId") ObjectId parentId) {
     return taskService.getSubTasks(parentId);
   }
-  
-  @RequestMapping(value = "/api/list/", method = RequestMethod.GET)
-  public @ResponseBody List<Task> getAllTasks() {
-    return taskService.getTasksOrderedBy("modified", Direction.DESC);
-  }
-  
+    
   @RequestMapping(value = "/api/list/{goalId}", method = RequestMethod.GET)
   public @ResponseBody List<Task> getAllTasksByGoal(@PathVariable("goalId") ObjectId goalId) {
-    return taskService.getTasksByGoal(goalId);
+    return taskService.getTasksOrderedBy(goalId, "position", Direction.ASC);
   }
 }

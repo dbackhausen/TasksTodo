@@ -3,7 +3,9 @@ package org.taskstodo.model;
 import java.util.Date;
 
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.taskstodo.util.ObjectIdJsonSerializer;
 
 /**
  * The goal, which is registered to an user and can contain tasks.
@@ -21,7 +23,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Goal extends BasicEntity {
   private String title;
   private String description;
+  @JsonSerialize(using=ObjectIdJsonSerializer.class)
   private ObjectId userId;
+  private int urgency;
+  private int priority;
+  private int level = 0;
+  private int position = 1;
   
   // --
   
@@ -67,11 +74,56 @@ public class Goal extends BasicEntity {
     }
   }
   
+  public int getUrgency() {
+    return urgency;
+  }
+
+  public void setUrgency(int urgency) {
+    if (this.urgency != urgency) {
+      this.urgency = urgency;
+      setModified(new Date());
+    }
+  }
+
+  public int getPriority() {
+    return priority;
+  }
+
+  public void setPriority(int priority) {
+    if (this.priority != priority) {
+      this.priority = priority;
+      setModified(new Date());
+    }
+  }
+  
+  public int getLevel() {
+    return level;
+  }
+  
+  public void setLevel(int level) {
+    if (this.level != level) {
+      this.level = level;
+      setModified(new Date());
+    }
+  }
+  
+  public int getPosition() {
+    return position;
+  }
+  
+  public void setPosition(int position) {
+    if (this.position != position) {
+      this.position = position;
+      setModified(new Date());
+    }
+  }
+  
   // --
 
   @Override
   public String toString() {
     return "Goal [title=" + title + ", description=" + description
-        + ", userId=" + userId + "]";
-  }
+        + ", userId=" + userId + ", urgency=" + urgency + ", priority="
+        + priority + ", level=" + level + ", position=" + position + "]";
+  } 
 }
