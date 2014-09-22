@@ -8,14 +8,6 @@ import org.taskstodo.model.Task;
 
 public interface TaskDAO extends GenericDao<Task> {
   /**
-   * Returns all sub tasks of a given parent.
-   * 
-   * @param parentId - the ID of the parent task.
-   * @return the sub tasks.
-   */
-  List<Task> findSubTasks(final ObjectId parentId);
-
-  /**
    * Returns all tasks by its goal.
    * 
    * @param goalId - the goal ID.
@@ -32,4 +24,12 @@ public interface TaskDAO extends GenericDao<Task> {
    * @return all tasks.
    */
   List<Task> findAll(final ObjectId goalId, Sort sort);
+  
+  /**
+   * Returns all completed tasks of a given goal sorted by completion date.
+   * 
+   * @param goalId - the ID of the goal.
+   * @return the tasks.
+   */
+  List<Task> findAllCompleted(final ObjectId goalId);
 }

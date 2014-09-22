@@ -52,6 +52,7 @@ public class NoteController {
       try {
         Note n = taskService.getNote(note.getId());
         n.setBody(note.getBody());
+        n.setDeleted(note.isDeleted());
         taskService.updateNote(n);
         
         return taskService.getNote(note.getId());

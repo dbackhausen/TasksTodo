@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.taskstodo.exception.UserNotFoundException;
 import org.taskstodo.model.User;
 import org.taskstodo.service.UserService;
 
@@ -86,11 +87,13 @@ public class UserController {
     if (user != null) {
       User u = userService.getUserByUsername(user.getUsername());
       
-      if (StringUtils.equals(user.getPassword(), u.getPassword())) {
+      if (u != null && StringUtils.equals(user.getPassword(), u.getPassword())) {
         return u;
+      } else {
+        throw new UserNotFoundException();
       }
+    } else {
+      throw new UserNotFoundException();
     }
-    
-    return null;
   }
 }

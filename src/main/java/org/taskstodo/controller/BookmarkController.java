@@ -50,13 +50,14 @@ public class BookmarkController {
   public @ResponseBody Bookmark update(@RequestBody Bookmark bookmark) {
     if (bookmark != null) {
       try {
-        Bookmark l = taskService.getBookmark(bookmark.getId());
-        l.setUrl(bookmark.getUrl());
-        l.setTitle(bookmark.getTitle());
-        l.setDescription(bookmark.getDescription());
-        l.setThumbnail(bookmark.getThumbnail());
-        l.setRelevance(bookmark.getRelevance());
-        taskService.updateBookmark(l);
+        Bookmark b = taskService.getBookmark(bookmark.getId());
+        b.setUrl(bookmark.getUrl());
+        b.setTitle(bookmark.getTitle());
+        b.setDescription(bookmark.getDescription());
+        b.setThumbnail(bookmark.getThumbnail());
+        b.setRelevance(bookmark.getRelevance());
+        b.setDeleted(bookmark.isDeleted());
+        taskService.updateBookmark(b);
         
         return taskService.getBookmark(bookmark.getId());
       } catch (Exception e) {

@@ -31,8 +31,10 @@ public class BookmarkDAOImpl extends GenericDaoImpl<Bookmark> implements Bookmar
    */
   @Override
   public List<Bookmark> findByTask(ObjectId taskId) {
-    Query query = new Query();
-    query.addCriteria(Criteria.where("taskId").is(taskId));
+    Criteria c = Criteria.where("taskId").is(taskId);
+    c.andOperator(Criteria.where("deleted").is(false));
+    
+    Query query = Query.query(c);
     query.with(new Sort(Direction.DESC, "created"));
     List<Bookmark> bookmarks = mongoTemplate.find(query, Bookmark.class);
     

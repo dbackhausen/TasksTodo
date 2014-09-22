@@ -12,6 +12,7 @@ public class Note extends BasicEntity {
   @JsonSerialize(using=ObjectIdJsonSerializer.class)
   private ObjectId taskId;
   private String body;
+  private boolean deleted;
   
   // --
   
@@ -39,6 +40,17 @@ public class Note extends BasicEntity {
   public void setBody(String body) {
     if (!isEqual(this.body, body)) {
       this.body = body;
+      setModified(new Date());
+    }
+  }
+  
+  public boolean isDeleted() {
+    return deleted;
+  }
+
+  public void setDeleted(boolean deleted) {
+    if (this.deleted != deleted) {
+      this.deleted = deleted;
       setModified(new Date());
     }
   }

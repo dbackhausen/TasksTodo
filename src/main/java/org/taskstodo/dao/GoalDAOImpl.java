@@ -25,28 +25,53 @@ public class GoalDAOImpl extends GenericDaoImpl<Goal> implements GoalDAO {
     super(Goal.class);
   }
     
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.taskstodo.dao.GenericDao#findAll()
+  /* (non-Javadoc)
+   * @see org.taskstodo.dao.GoalDAO#findAll(org.bson.types.ObjectId)
    */
   @Override
   public List<Goal> findAll(ObjectId userId) {
-    Query query = Query.query(Criteria.where("userId").is(userId));
+    Criteria c = Criteria.where("userId").is(userId);
+    c.andOperator(Criteria.where("deleted").is(false).andOperator(Criteria.where("completed").is(false)));
+    
+    Query query = Query.query(c);
+    query.with(new Sort(Sort.Direction.ASC, "position"));
+    
     List<Goal> goals = mongoTemplate.find(query, Goal.class);
-    LOGGER.debug("Found " + (goals != null ? goals.size() : "0") + " goals from user " + userId.toString());
+    LOGGER.debug("Found " + (goals != null ? goals.size() : "0") + " active goals for user " + userId.toString());
+    
     return goals;
   }
 
   /* (non-Javadoc)
-   * @see org.taskstodo.dao.GenericDao#findAll(org.springframework.data.domain.Sort)
+   * @see org.taskstodo.dao.GoalDAO#findAll(org.bson.types.ObjectId, org.springframework.data.domain.Sort)
    */
   @Override
   public List<Goal> findAll(ObjectId userId, Sort sort) {
-    Query query = Query.query(Criteria.where("userId").is(userId));
+    Criteria c = Criteria.where("userId").is(userId);
+    c.andOperator(Criteria.where("deleted").is(false).andOperator(Criteria.where("completed").is(false)));
+    
+    Query query = Query.query(c);
     query.with(sort);
+    
     List<Goal> goals = mongoTemplate.find(query, Goal.class);
-    LOGGER.info("Found " + (goals != null ? goals.size() : "0") + " goals from user " + userId.toString());
+    LOGGER.info("Found " + (goals != null ? goals.size() : "0") + " active goals for user " + userId.toString());
+    
+    return goals;
+  }
+
+  /* (non-Javadoc)
+   * @see org.taskstodo.dao.GoalDAO#findAllCompleted(org.bson.types.ObjectId)
+   */
+  @Override
+  public List<Goal> findAllCompleted(final ObjectId userId) {
+    Criteria c = Criteria.where("userId").is(userId);
+    c.andOperator(Criteria.where("deleted").is(false).andOperator(Criteria.where("completed").is(true)));
+    
+    Query query = Query.query(c);
+    query.with(new Sort(Sort.Direction.DESC, "completedDate"));
+    
+    List<Goal> goals = mongoTemplate.find(query, Goal.class);
+    LOGGER.debug("Found " + (goals != null ? goals.size() : "0") + " completed goals for user " + userId.toString());
     
     return goals;
   }

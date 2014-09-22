@@ -28,8 +28,10 @@ public class NoteDAOImpl extends GenericDaoImpl<Note> implements NoteDAO {
    */
   @Override
   public List<Note> findByTask(ObjectId taskId) {
-    Query query = new Query();
-    query.addCriteria(Criteria.where("taskId").is(taskId));
+    Criteria c = Criteria.where("taskId").is(taskId);
+    c.andOperator(Criteria.where("deleted").is(false));
+    
+    Query query = Query.query(c);
     query.with(new Sort(Direction.DESC, "created"));
     return mongoTemplate.find(query, Note.class);
   }

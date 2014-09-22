@@ -55,6 +55,7 @@ public class TabController {
         t.setTitle(tab.getTitle());
         t.setUrl(tab.getUrl());
         t.setThumbnail(tab.getThumbnail());
+        t.setDeleted(tab.isDeleted());
         taskService.updateTab(t);
         
         return taskService.getTab(tab.getId());

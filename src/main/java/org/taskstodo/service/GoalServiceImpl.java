@@ -71,6 +71,13 @@ public class GoalServiceImpl implements GoalService {
   public List<Goal> getGoalsOrderedBy(ObjectId userId, String field, Direction direction) {
     return goalDAO.findAll(userId, new Sort(new Order(direction, field)));
   }
+
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.GoalService#getCompletedGoals(org.bson.types.ObjectId)
+   */
+  public List<Goal> getCompletedGoals(ObjectId userId) {
+    return goalDAO.findAllCompleted(userId);
+  }
   
   /* (non-Javadoc)
    * @see org.taskstodo.service.GoalService#deleteGoal(org.bson.types.ObjectId, boolean)

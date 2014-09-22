@@ -7,8 +7,8 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.taskstodo.util.ObjectIdJsonSerializer;
 
-@Document
-public class History extends BasicEntity {
+@Document(collection="history")
+public class HistoryEntry extends BasicEntity {
   @JsonSerialize(using=ObjectIdJsonSerializer.class)
   private ObjectId taskId;
   private String title;
@@ -17,13 +17,14 @@ public class History extends BasicEntity {
   private String thumbnail;
   private String content;
   private int relevance = 0;
+  private boolean deleted;
   
   // --
   
-  public History() {
+  public HistoryEntry() {
   }
   
-  public History(ObjectId taskId) {
+  public HistoryEntry(ObjectId taskId) {
     setTaskId(taskId);
   }
   
@@ -75,7 +76,10 @@ public class History extends BasicEntity {
   }
   
   public void setThumbnail(String thumbnail) {
-    this.thumbnail = thumbnail;
+    if (this.thumbnail != thumbnail) {
+      this.thumbnail = thumbnail;
+      setModified(new Date());
+    }
   }
 
   public String getContent() {
@@ -83,7 +87,10 @@ public class History extends BasicEntity {
   }
   
   public void setContent(String content) {
-    this.content = content;
+    if (this.content != content) {
+      this.content = content;
+      setModified(new Date());
+    }
   }
   
   public int getRelevance() {
@@ -93,6 +100,17 @@ public class History extends BasicEntity {
   public void setRelevance(int relevance) {
     if (this.relevance != relevance) {
       this.relevance = relevance;
+      setModified(new Date());
+    }
+  }
+  
+  public boolean isDeleted() {
+    return deleted;
+  }
+
+  public void setDeleted(boolean deleted) {
+    if (this.deleted != deleted) {
+      this.deleted = deleted;
       setModified(new Date());
     }
   }

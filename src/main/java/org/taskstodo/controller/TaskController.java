@@ -65,7 +65,9 @@ public class TaskController {
           t.setPriority(task.getPriority());
           t.setLevel(task.getLevel());
           t.setPosition(task.getPosition());
-
+          t.setCompleted(task.isCompleted());
+          t.setDeleted(task.isDeleted());
+          
           taskService.updateTask(task);
           
           return taskService.getTask(task.getId());
@@ -94,14 +96,14 @@ public class TaskController {
   public @ResponseBody Task getTask(@PathVariable("taskId") ObjectId taskId) {
     return taskService.getTask(taskId);
   }
-  
-  @RequestMapping(value = "/api/read/{parentId}/subtasks", method = RequestMethod.GET)
-  public @ResponseBody List<Task> getSubTasks(@PathVariable("parentId") ObjectId parentId) {
-    return taskService.getSubTasks(parentId);
-  }
     
   @RequestMapping(value = "/api/list/{goalId}", method = RequestMethod.GET)
   public @ResponseBody List<Task> getAllTasksByGoal(@PathVariable("goalId") ObjectId goalId) {
     return taskService.getTasksOrderedBy(goalId, "position", Direction.ASC);
+  }
+  
+  @RequestMapping(value = "/api/list/completed/{goalId}", method = RequestMethod.GET)
+  public @ResponseBody List<Task> getAllCompletedTasksByGoal(@PathVariable("goalId") ObjectId goalId) {
+    return taskService.getCompletedTasks(goalId);
   }
 }

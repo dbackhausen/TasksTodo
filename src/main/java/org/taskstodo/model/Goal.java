@@ -25,10 +25,15 @@ public class Goal extends BasicEntity {
   private String description;
   @JsonSerialize(using=ObjectIdJsonSerializer.class)
   private ObjectId userId;
+  private Date dueDate = null;
+  private Date completedDate = null;
+  private Date reminderDate = null;
   private int urgency;
   private int priority;
   private int level = 0;
   private int position = 1;
+  private boolean completed;
+  private boolean deleted;
   
   // --
   
@@ -70,6 +75,39 @@ public class Goal extends BasicEntity {
   public void setUserId(ObjectId userId) {
     if (!isEqual(this.userId, userId)) {
       this.userId = userId;
+      setModified(new Date());
+    }
+  }
+  
+  public Date getDueDate() {
+    return dueDate;
+  }
+
+  public void setDueDate(Date dueDate) {
+    if (!isEqual(this.dueDate, dueDate)) {
+      this.dueDate = dueDate;
+      setModified(new Date());
+    }
+  }
+
+  public Date getCompletedDate() {
+    return completedDate;
+  }
+
+  public void setCompletedDate(Date completedDate) {
+    if (!isEqual(this.completedDate, completedDate)) {
+      this.completedDate = completedDate;
+      setModified(new Date());
+    }
+  }
+
+  public Date getReminderDate() {
+    return reminderDate;
+  }
+
+  public void setReminderDate(Date reminderDate) {
+    if (!isEqual(this.reminderDate, reminderDate)) {
+      this.reminderDate = reminderDate;
       setModified(new Date());
     }
   }
@@ -117,13 +155,36 @@ public class Goal extends BasicEntity {
       setModified(new Date());
     }
   }
-  
+
+  public boolean isCompleted() {
+    return completed;
+  }
+
+  public void setCompleted(boolean completed) {
+    if (this.completed != completed) {
+      this.completed = completed;
+      setModified(new Date());
+    }
+  }
+
+  public boolean isDeleted() {
+    return deleted;
+  }
+
+  public void setDeleted(boolean deleted) {
+    if (this.deleted != deleted) {
+      this.deleted = deleted;
+      setModified(new Date());
+    }
+  }
+
   // --
 
   @Override
   public String toString() {
     return "Goal [title=" + title + ", description=" + description
         + ", userId=" + userId + ", urgency=" + urgency + ", priority="
-        + priority + ", level=" + level + ", position=" + position + "]";
-  } 
+        + priority + ", level=" + level + ", position=" + position
+        + ", completed=" + completed + ", deleted=" + deleted + "]";
+  }
 }

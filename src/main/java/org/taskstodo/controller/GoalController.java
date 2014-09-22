@@ -1,6 +1,5 @@
 package org.taskstodo.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -62,6 +61,8 @@ public class GoalController {
           g.setPriority(goal.getPriority());
           g.setLevel(goal.getLevel());
           g.setPosition(goal.getPosition());
+          g.setCompleted(goal.isCompleted());
+          g.setDeleted(goal.isDeleted());
           
           goalService.updateGoal(g);
   
@@ -94,10 +95,11 @@ public class GoalController {
   
   @RequestMapping(value = "/api/list/{userId}", method = RequestMethod.GET)
   public @ResponseBody List<Goal> getAllGoals(@PathVariable("userId") ObjectId userId) {
-    if (userId != null) {
-      return goalService.getGoalsOrderedBy(userId, "position", Direction.ASC);
-    }
-    
-    return new ArrayList<Goal>(0);
+    return goalService.getGoalsOrderedBy(userId, "position", Direction.ASC);
+  }
+  
+  @RequestMapping(value = "/api/list/completed/{userId}", method = RequestMethod.GET)
+  public @ResponseBody List<Goal> getAllCompletedGoals(@PathVariable("userId") ObjectId userId) {
+    return goalService.getCompletedGoals(userId);
   }
 }

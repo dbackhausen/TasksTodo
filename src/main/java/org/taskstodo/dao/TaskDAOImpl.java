@@ -24,29 +24,22 @@ public class TaskDAOImpl extends GenericDaoImpl<Task> implements TaskDAO {
   public TaskDAOImpl() {
     super(Task.class);
   }
-  
-  /* (non-Javadoc)
-   * @see org.taskstodo.dao.TaskDAO#findSubTasks(org.bson.types.ObjectId)
-   */
-  @Override
-  public List<Task> findSubTasks(final ObjectId parentId) {
-    Query query = new Query(Criteria.where("parentId").is(parentId));
-    query.with(new Sort(Sort.Direction.ASC, "position"));
-    List<Task> subtasks = mongoTemplate.find(query, Task.class);
-    LOGGER.debug("Found " + (subtasks != null ? subtasks.size() : "0") + " subtasks for task " + parentId);
-    return subtasks;
-  }
 
   /* (non-Javadoc)
    * @see org.taskstodo.dao.TaskDAO#findAll(org.bson.types.ObjectId)
    */
   @Override
   public List<Task> findAll(ObjectId goalId) {
-    Query query = new Query(Criteria.where("goalId").is(goalId));
+    Criteria c = Criteria.where("goalId").is(goalId);
+    c.andOperator(Criteria.where("deleted").is(false).andOperator(Criteria.where("completed").is(false)));
+    
+    Query query = Query.query(c);
     query.with(new Sort(Sort.Direction.ASC, "position"));
-    List<Task> subtasks = mongoTemplate.find(query, Task.class);
-    LOGGER.debug("Found " + (subtasks != null ? subtasks.size() : "0") + " tasks for goal " + goalId);
-    return subtasks;
+    
+    List<Task> tasks = mongoTemplate.find(query, Task.class);
+    LOGGER.debug("Found " + (tasks != null ? tasks.size() : "0") + " active tasks for goal " + goalId.toString());
+    
+    return tasks;
   }
   
   /* (non-Javadoc)
@@ -54,10 +47,32 @@ public class TaskDAOImpl extends GenericDaoImpl<Task> implements TaskDAO {
    */
   @Override
   public List<Task> findAll(ObjectId goalId, Sort sort) {
-    Query query = Query.query(Criteria.where("goalId").is(goalId));
+    Criteria c = Criteria.where("goalId").is(goalId);
+    c.andOperator(Criteria.where("deleted").is(false).andOperator(Criteria.where("completed").is(false)));
+    
+    Query query = Query.query(c);
     query.with(sort);
-    List<Task> goals = mongoTemplate.find(query, Task.class);
-    LOGGER.debug("Found " + (goals != null ? goals.size() : "0") + " tasks for goal " + goalId.toString());
-    return goals;
+    
+    List<Task> tasks = mongoTemplate.find(query, Task.class);
+    LOGGER.debug("Found " + (tasks != null ? tasks.size() : "0") + " active tasks for goal " + goalId.toString());
+    
+    return tasks;
+  }
+
+  /* (non-Javadoc)
+   * @see org.taskstodo.dao.TaskDAO#findAllCompleted(org.bson.types.ObjectId)
+   */
+  @Override
+  public List<Task> findAllCompleted(final ObjectId goalId) {
+    Criteria c = Criteria.where("goalId").is(goalId);
+    c.andOperator(Criteria.where("deleted").is(false).andOperator(Criteria.where("completed").is(true)));
+    
+    Query query = Query.query(c);
+    query.with(new Sort(Sort.Direction.DESC, "completedDate"));
+    
+    List<Task> tasks = mongoTemplate.find(query, Task.class);
+    LOGGER.debug("Found " + (tasks != null ? tasks.size() : "0") + " completed tasks for goal " + goalId.toString());
+    
+    return tasks;
   }
 }

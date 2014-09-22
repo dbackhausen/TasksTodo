@@ -32,8 +32,10 @@ public class TabDAOImpl extends GenericDaoImpl<Tab> implements TabDAO {
    */
   @Override
   public List<Tab> findByTask(ObjectId taskId) {
-    Query query = new Query();
-    query.addCriteria(Criteria.where("taskId").is(taskId));
+    Criteria c = Criteria.where("taskId").is(taskId);
+    c.andOperator(Criteria.where("deleted").is(false));
+    
+    Query query = Query.query(c);
     query.with(new Sort(Direction.ASC, "tabId"));
     List<Tab> tabs = mongoTemplate.find(query, Tab.class);
     

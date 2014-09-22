@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.taskstodo.model.History;
+import org.taskstodo.model.HistoryEntry;
 import org.taskstodo.service.TaskService;
 
 @Controller
@@ -32,11 +32,11 @@ public class HistoryController {
 
   @RequestMapping(value = "/api/create/", method = RequestMethod.POST, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody History create(@RequestBody History history) {
-    if (history != null) {
+  public @ResponseBody HistoryEntry create(@RequestBody HistoryEntry entry) {
+    if (entry != null) {
       try {
-        ObjectId id = taskService.addHistory(history);
-        return taskService.getHistory(id);
+        ObjectId id = taskService.addHistoryEntry(entry);
+        return taskService.getHistoryEntry(id);
       } catch (Exception e) {
         LOGGER.error(e.getMessage(), e);
       }
@@ -47,18 +47,19 @@ public class HistoryController {
   
   @RequestMapping(value = "/api/update/", method = RequestMethod.PUT, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody History update(@RequestBody History history) {
-    if (history != null) {
+  public @ResponseBody HistoryEntry update(@RequestBody HistoryEntry entry) {
+    if (entry != null) {
       try {
-        History h = taskService.getHistory(history.getId());
-        h.setUrl(history.getUrl());
-        h.setTitle(history.getTitle());
-        h.setDescription(history.getDescription());
-        h.setThumbnail(history.getThumbnail());
-        h.setRelevance(history.getRelevance());
-        taskService.updateHistory(h);
+        HistoryEntry h = taskService.getHistoryEntry(entry.getId());
+        h.setUrl(entry.getUrl());
+        h.setTitle(entry.getTitle());
+        h.setDescription(entry.getDescription());
+        h.setThumbnail(entry.getThumbnail());
+        h.setRelevance(entry.getRelevance());
+        h.setDeleted(entry.isDeleted());
+        taskService.updateHistoryEntry(h);
         
-        return taskService.getHistory(history.getId());
+        return taskService.getHistoryEntry(entry.getId());
       } catch (Exception e) {
         LOGGER.error(e.getMessage(), e);
       }
@@ -67,24 +68,24 @@ public class HistoryController {
     return null;
   }
 
-  @RequestMapping(value = "/api/delete/{historyId}", method = RequestMethod.DELETE)
-  public @ResponseStatus(value = HttpStatus.NO_CONTENT) void delete(@PathVariable ObjectId historyId) {
-    taskService.deleteHistory(historyId);
+  @RequestMapping(value = "/api/delete/{entryId}", method = RequestMethod.DELETE)
+  public @ResponseStatus(value = HttpStatus.NO_CONTENT) void delete(@PathVariable ObjectId entryId) {
+    taskService.deleteHistoryEntry(entryId);
   }
   
-  @RequestMapping(value = "/api/delete/{historyId}", method = RequestMethod.POST)
-  public @ResponseStatus(value = HttpStatus.NO_CONTENT) void deleteByPost(@PathVariable ObjectId historyId) {
-    taskService.deleteHistory(historyId);
+  @RequestMapping(value = "/api/delete/{entryId}", method = RequestMethod.POST)
+  public @ResponseStatus(value = HttpStatus.NO_CONTENT) void deleteByPost(@PathVariable ObjectId entryId) {
+    taskService.deleteHistoryEntry(entryId);
   }
   
   @RequestMapping(value = "/api/list/{taskId}", method = RequestMethod.GET)
-  public @ResponseBody List<History> list(@PathVariable("taskId") ObjectId taskId) {
-    List<History> histories = new ArrayList<History>();
+  public @ResponseBody List<HistoryEntry> list(@PathVariable("taskId") ObjectId taskId) {
+    List<HistoryEntry> history = new ArrayList<HistoryEntry>();
     
     if (taskId != null) {
-      histories = taskService.getHistories(taskId);
+      history = taskService.getHistory(taskId);
     }
     
-    return histories;
+    return history;
   }
 }

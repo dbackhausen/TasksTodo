@@ -8,21 +8,29 @@ import org.taskstodo.model.Goal;
 
 public interface GoalDAO extends GenericDao<Goal> {
   /**
-   * Returns all entities.
+   * Returns all goals of a certain user.
    * 
    * @param userId - the user identifier.
    * 
    * @return all goals.
    */
-  public List<Goal> findAll(ObjectId userId);
+  List<Goal> findAll(ObjectId userId);
 
   /**
-   * Returns all entities sorted by a given option.
+   * Returns all goals of a certain user sorted by a given option.
    * 
    * @param userId - the user identifier.
    * @param sort - the sort order.
    * 
    * @return all goals.
    */
-  public List<Goal> findAll(ObjectId userId, Sort sort);
+  List<Goal> findAll(ObjectId userId, Sort sort);
+  
+  /**
+   * Returns all completed goals of a given user sorted by completion date.
+   * 
+   * @param userId - the user identifier.
+   * @return the goals.
+   */
+  List<Goal> findAllCompleted(final ObjectId userId);
 }

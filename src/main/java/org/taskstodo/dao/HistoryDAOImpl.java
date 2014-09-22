@@ -12,10 +12,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
-import org.taskstodo.model.History;
+import org.taskstodo.model.HistoryEntry;
 
 @Repository
-public class HistoryDAOImpl extends GenericDaoImpl<History> implements HistoryDAO {
+public class HistoryDAOImpl extends GenericDaoImpl<HistoryEntry> implements HistoryDAO {
   /* The Logger */
   private static final Logger LOGGER = LoggerFactory.getLogger(HistoryDAOImpl.class);
 
@@ -23,18 +23,20 @@ public class HistoryDAOImpl extends GenericDaoImpl<History> implements HistoryDA
   private MongoTemplate mongoTemplate;
   
   public HistoryDAOImpl() {
-    super(History.class);
+    super(HistoryEntry.class);
   }
 
   /* (non-Javadoc)
    * @see org.taskstodo.dao.HistoryDAO#findByTask(org.bson.types.ObjectId)
    */
   @Override
-  public List<History> findByTask(ObjectId taskId) {
-    Query query = new Query();
-    query.addCriteria(Criteria.where("taskId").is(taskId));
+  public List<HistoryEntry> findByTask(ObjectId taskId) {
+    Criteria c = Criteria.where("taskId").is(taskId);
+    c.andOperator(Criteria.where("deleted").is(false));
+    
+    Query query = Query.query(c);
     query.with(new Sort(Direction.DESC, "created"));
-    List<History> histories = mongoTemplate.find(query, History.class);
+    List<HistoryEntry> histories = mongoTemplate.find(query, HistoryEntry.class);
     
     LOGGER.debug("Found " +  histories.size() + " history entries for task " + taskId.toString());
     
@@ -48,6 +50,6 @@ public class HistoryDAOImpl extends GenericDaoImpl<History> implements HistoryDA
   public void deleteAllByTask(ObjectId taskId) {
     Query query = new Query();
     query.addCriteria(Criteria.where("taskId").is(taskId));
-    mongoTemplate.remove(query, History.class);
+    mongoTemplate.remove(query, HistoryEntry.class);
   }
 }

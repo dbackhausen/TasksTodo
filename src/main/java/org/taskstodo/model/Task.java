@@ -42,6 +42,8 @@ public class Task extends BasicEntity {
   private int priority;
   private int level = 0;
   private int position = 1;
+  private boolean completed;
+  private boolean deleted;
   
   // --
   
@@ -168,8 +170,28 @@ public class Task extends BasicEntity {
       setModified(new Date());
     }
   }
+  
+  public boolean isCompleted() {
+    return completed;
+  }
 
-  // --
+  public void setCompleted(boolean completed) {
+    if (this.completed != completed) {
+      this.completed = completed;
+      setModified(new Date());
+    }
+  }
+
+  public boolean isDeleted() {
+    return deleted;
+  }
+
+  public void setDeleted(boolean deleted) {
+    if (this.deleted != deleted) {
+      this.deleted = deleted;
+      setModified(new Date());
+    }
+  }
 
   @Override
   public String toString() {
@@ -177,6 +199,7 @@ public class Task extends BasicEntity {
         + ", goalId=" + goalId + ", parentId=" + parentId + ", dueDate="
         + dueDate + ", completedDate=" + completedDate + ", reminderDate="
         + reminderDate + ", urgency=" + urgency + ", priority=" + priority
-        + ", level=" + level + ", position=" + position + "]";
+        + ", level=" + level + ", position=" + position + ", completed="
+        + completed + ", deleted=" + deleted + "]";
   }
 }

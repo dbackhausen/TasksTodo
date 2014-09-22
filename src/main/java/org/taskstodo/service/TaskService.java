@@ -6,7 +6,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.domain.Sort.Direction;
 import org.taskstodo.exception.ServiceException;
 import org.taskstodo.model.Bookmark;
-import org.taskstodo.model.History;
+import org.taskstodo.model.HistoryEntry;
 import org.taskstodo.model.Note;
 import org.taskstodo.model.Tab;
 import org.taskstodo.model.Task;
@@ -76,37 +76,13 @@ public interface TaskService {
   public List<Task> getTasksOrderedBy(ObjectId goalId, String field, Direction direction);
   
   /**
-   * Returns all sub tasks of a given task.
+   * Returns all finished tasks.
    * 
-   * @param parentId - the parent ID.
+   * @param goalId - the goal ID.
    * @return the tasks.
    */
-  public List<Task> getSubTasks(ObjectId parentId);
-  
-  /**
-   * Returns all sub tasks of a given task.
-   * 
-   * @param parentId - the parent ID.
-   * @return the tasks.
-   */
-  public List<Task> getSubTasks(String parentId);
-  
-  /**
-   * Return the amount of existing subtasks.
-   * 
-   * @param parentId - the parent ID.
-   * @return the number of subtasks.
-   */
-  public int getSubTaskCount(ObjectId parentId);
-  
-  /**
-   * Return the amount of existing subtasks.
-   * 
-   * @param parentId - the parent ID.
-   * @return the number of subtasks.
-   */
-  public int getSubTaskCount(String parentId);
-  
+  public List<Task> getCompletedTasks(ObjectId goalId);
+
   /**
    * Deletes a given task by its identifier.
    * 
@@ -129,25 +105,6 @@ public interface TaskService {
    * @param goalId - the goal Id.
    */
   public void deleteTasksByGoal(ObjectId goalId);
-  
-  /**
-   * Reorganizes all tasks if level has been changed.
-   * 
-   * @param task - the task, which has been changed.
-   * @param prevLevel - the previous level of the goal.
-   * @throws ServiceException - Exception if save operation throws errors
-   */
-  public void reorganizeByLevel(Task task, int prevLevel) throws ServiceException;
-   
-  /**
-   * Reorganizes all tasks if position has been changed.
-   * 
-   * @param task - the task, which has been changed.
-   * @param prevPosition - the previous position of the goal.
-   * @throws ServiceException - Exception if save operation throws errors
-   */
-  public void reorganizeByPosition(Task task, int prevPosition) throws ServiceException;
-  
   
   /////////////////////////////////////////////////////////////////////////////
   // NOTE                                                                    //
@@ -289,43 +246,43 @@ public interface TaskService {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Adds a new history for a task.
+   * Adds a new history entry.
    * 
    * @param taskId - the task identifier.
    * 
-   * @param bookmark - the history.
+   * @param entry - the history entry.
    * 
    * @return the identifier.
    */
-  public ObjectId addHistory(History history) throws ServiceException;
+  public ObjectId addHistoryEntry(HistoryEntry entry) throws ServiceException;
   
   /**
-   * Updates an existing history.
+   * Updates an existing history entry.
    * 
-   * @param history - the history.
+   * @param entry - the history entry.
    */
-  public void updateHistory(History history) throws ServiceException;
+  public void updateHistoryEntry(HistoryEntry entry) throws ServiceException;
   
   /**
-   * Returns a given history by its identifier.
+   * Returns a given history entry by its identifier.
    * 
    * @param id - the identifier.
    * 
-   * @return the history.
+   * @return the history entry.
    */
-  public History getHistory(ObjectId id);
+  public HistoryEntry getHistoryEntry(ObjectId id);
   
   /**
    * Returns all history for a task.
    * 
    * @return the history.
    */
-  public List<History> getHistories(ObjectId taskId);
+  public List<HistoryEntry> getHistory(ObjectId taskId);
   
   /**
-   * Deletes a given history by its identifier.
+   * Deletes a given history entry by its identifier.
    * 
    * @param id - the identifier.
    */
-  public void deleteHistory(ObjectId id);
+  public void deleteHistoryEntry(ObjectId id);
 }

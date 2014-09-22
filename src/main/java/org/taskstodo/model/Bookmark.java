@@ -16,6 +16,7 @@ public class Bookmark extends BasicEntity {
   private String description;
   private String thumbnail;
   private int relevance = 0;
+  private boolean deleted;
   
   // --
   
@@ -74,7 +75,10 @@ public class Bookmark extends BasicEntity {
   }
   
   public void setThumbnail(String thumbnail) {
-    this.thumbnail = thumbnail;
+    if (this.thumbnail != thumbnail) {
+      this.thumbnail = thumbnail;
+      setModified(new Date());
+    }
   }
 
   public int getRelevance() {
@@ -84,6 +88,17 @@ public class Bookmark extends BasicEntity {
   public void setRelevance(int relevance) {
     if (this.relevance != relevance) {
       this.relevance = relevance;
+      setModified(new Date());
+    }
+  }
+  
+  public boolean isDeleted() {
+    return deleted;
+  }
+
+  public void setDeleted(boolean deleted) {
+    if (this.deleted != deleted) {
+      this.deleted = deleted;
       setModified(new Date());
     }
   }

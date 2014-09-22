@@ -62,6 +62,15 @@ public interface GoalService {
   public List<Goal> getGoalsOrderedBy(ObjectId userId, String field, Direction direction);
   
   /**
+   * Returns all finished goals.
+   * 
+   * @param userId - the user identifier.
+   *
+   * @return the goals.
+   */
+  public List<Goal> getCompletedGoals(ObjectId userId);
+    
+  /**
    * Deletes a given goal by its identifier.
    * 
    * @param id - the identifier.

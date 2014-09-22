@@ -15,7 +15,7 @@ public class Tab extends BasicEntity {
   private String title;
   private String url;
   private String thumbnail;
-
+  private boolean deleted;
   
   // --
   
@@ -71,6 +71,20 @@ public class Tab extends BasicEntity {
   }
   
   public void setThumbnail(String thumbnail) {
-    this.thumbnail = thumbnail;
+    if (this.thumbnail != thumbnail) {
+      this.thumbnail = thumbnail;
+      setModified(new Date());
+    }
+  }
+  
+  public boolean isDeleted() {
+    return deleted;
+  }
+
+  public void setDeleted(boolean deleted) {
+    if (this.deleted != deleted) {
+      this.deleted = deleted;
+      setModified(new Date());
+    }
   }
 }

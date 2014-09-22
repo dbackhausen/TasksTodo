@@ -74,7 +74,7 @@ public class TaskTest {
       Assert.assertNotNull(taskId);
       
       // Get all subtasks of parent
-      List<Task> subtasks = taskService.getSubTasks(taskId);
+      List<Task> subtasks = taskService.getCompletedTasks(taskId);
       int counter = subtasks.size() + 1;
       
       // Create a new sub task manually
@@ -93,7 +93,7 @@ public class TaskTest {
       
       // Find the newly created subtask
       subtasks = null;
-      subtasks = taskService.getSubTasks(taskId);
+      subtasks = taskService.getCompletedTasks(taskId);
       Assert.assertNotNull(subtasks);
       Assert.assertEquals(2, subtasks.size());
     } catch (ServiceException e) {

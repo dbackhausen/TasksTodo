@@ -60,7 +60,10 @@ public class FileDAOImpl implements FileDAO {
    */
   @Override
   public List<GridFSDBFile> list(ObjectId taskId) {
-    Query query = Query.query(Criteria.where("metadata.taskId").is(taskId));
+    Criteria c = Criteria.where("metadata.taskId").is(taskId);
+    c.andOperator(Criteria.where("metadata.deleted").is(false));
+    
+    Query query = Query.query(c);
 //    query.with(new Sort(Sort.Direction.ASC, "uploadDate"));
     return gridTemplate.find(query);
   }
