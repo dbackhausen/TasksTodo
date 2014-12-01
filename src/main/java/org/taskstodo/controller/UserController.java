@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.taskstodo.exception.InvalidUserException;
+import org.taskstodo.exception.UserAlreadyExistsException;
 import org.taskstodo.exception.UserNotFoundException;
 import org.taskstodo.model.User;
 import org.taskstodo.service.UserService;
@@ -38,28 +40,59 @@ public class UserController {
   @RequestMapping(value = "/api/create/", method = RequestMethod.POST, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   public @ResponseBody User create(@RequestBody User user) {
-    try {
-      ObjectId id = userService.addUser(user);
-      return userService.getUser(id);
-    } catch (Exception e) {
-      LOGGER.error(e.getMessage(), e);
+    if (user != null) {
+      // Check if user exists
+      User u = userService.getUserByUsername(user.getUsername());
+      
+      if (u == null) {
+        try {
+          // Create user
+          ObjectId id = userService.addUser(user);
+          return userService.getUser(id);
+        } catch (Exception e) {
+          LOGGER.error(e.getMessage(), e);
+        }        
+      } else {
+        LOGGER.error("User " + user.getUsername() + " already exists!");
+        throw new UserAlreadyExistsException();
+      }
+    } else {
+      LOGGER.error("Invalid user submitted!");
+      throw new InvalidUserException();
     }
     
     return null;
   }
   
-  @RequestMapping(value = "/api/update/", method = RequestMethod.PUT, 
+  @RequestMapping(value = "/api/update/", method = RequestMethod.POST, 
       produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   public @ResponseBody User update(@RequestBody User user) {
-    try {
-      User u = userService.getUser(user.getId());
-      u.setUsername(user.getUsername());
-      u.setPassword(user.getPassword());
-      userService.updateUser(u);
-      
-      return userService.getUser(user.getId());
-    } catch (Exception e) {
-      LOGGER.error(e.getMessage(), e);
+    if (user != null) {
+      try {
+        User u = userService.getUser(user.getId());
+        u.setUsername(user.getUsername());
+        u.setPassword(user.getPassword());
+        userService.updateUser(u);
+        
+        return userService.getUser(user.getId());
+      } catch (Exception e) {
+        LOGGER.error(e.getMessage(), e);
+      }
+    } else {
+      throw new InvalidUserException();
+    }
+    
+    return null;
+  }
+  
+  @RequestMapping(value = "/api/reset/", method = RequestMethod.POST, 
+      produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+  public @ResponseBody User reset(@RequestBody String username) {
+    if (username != null) {
+      User u = userService.getUserByUsername(username);
+      LOGGER.info("TODO Sending new password to " + username);
+    } else {
+      throw new InvalidUserException();
     }
     
     return null;

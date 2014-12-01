@@ -51,7 +51,7 @@ public class TabController {
     if (tab != null) {
       try {
         Tab t = taskService.getTab(tab.getId());
-        t.setTabId(tab.getTabId());
+        t.setId(tab.getId());
         t.setTitle(tab.getTitle());
         t.setUrl(tab.getUrl());
         t.setThumbnail(tab.getThumbnail());

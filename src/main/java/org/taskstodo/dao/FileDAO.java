@@ -11,28 +11,28 @@ import com.mongodb.gridfs.GridFSFile;
 
 public interface FileDAO {
   /**
-   * Saves a file to the file database.
+   * Saves a attachment to the attachment database.
    * 
    * @param taskId - the identifier of the task.
-   * @param file - the file.
+   * @param attachment - the attachment.
    * 
-   * @return the new file.
+   * @return the new attachment.
    * 
-   * @throws IOException - Error storing file to file database.
+   * @throws IOException - Error storing attachment to attachment database.
    */
-  GridFSFile save(ObjectId taskId, MultipartFile file) throws IOException;
+  GridFSFile save(ObjectId taskId, MultipartFile attachment) throws IOException;
   
   /**
-   * Loads a file from the file database.
+   * Loads a attachment from the attachment database.
    * 
-   * @param id - the identifier of the file.
+   * @param id - the identifier of the attachment.
    * 
-   * @return the file.
+   * @return the attachment.
    */
   GridFSDBFile load(ObjectId id);
 
   /**
-   * Returns the list of files for a given task.
+   * Returns the list of attachments for a given task.
    * 
    * @param taskId - the identifier of the task.
    * 
@@ -41,9 +41,9 @@ public interface FileDAO {
   List<GridFSDBFile> list(ObjectId taskId);
   
   /**
-   * Deletes a file.
+   * Deletes a attachment.
    * 
-   * @param fileId - the file identifier.
+   * @param attachmentId - the attachment identifier.
    */
-  void delete(ObjectId fileId);
+  void delete(ObjectId attachmentId);
 }

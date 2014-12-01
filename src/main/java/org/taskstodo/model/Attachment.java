@@ -1,18 +1,15 @@
 package org.taskstodo.model;
 
-import java.util.Date;
-
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.taskstodo.util.ObjectIdJsonSerializer;
 
-public class File extends BasicEntity {
+public class Attachment extends BasicEntity {
   @JsonSerialize(using=ObjectIdJsonSerializer.class)
   private ObjectId taskId;
   private String filename;
-  private long length;
+  private long size;
   private String contentType;
-  private Date uploadDate;
   
   public ObjectId getTaskId() {
     return taskId;
@@ -30,12 +27,12 @@ public class File extends BasicEntity {
     this.filename = filename;
   }
   
-  public long getLength() {
-    return length;
+  public long getSize() {
+    return size;
   }
   
-  public void setLength(long length) {
-    this.length = length;
+  public void setSize(long size) {
+    this.size = size;
   }
   
   public String getContentType() {
@@ -44,13 +41,5 @@ public class File extends BasicEntity {
   
   public void setContentType(String contentType) {
     this.contentType = contentType;
-  }
-  
-  public Date getUploadDate() {
-    return uploadDate;
-  }
-
-  public void setUploadDate(Date uploadDate) {
-    this.uploadDate = uploadDate;
   }
 }

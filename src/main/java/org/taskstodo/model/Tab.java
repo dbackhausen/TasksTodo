@@ -11,7 +11,6 @@ import org.taskstodo.util.ObjectIdJsonSerializer;
 public class Tab extends BasicEntity {
   @JsonSerialize(using=ObjectIdJsonSerializer.class)
   private ObjectId taskId;
-  private String tabId;
   private String title;
   private String url;
   private String thumbnail;
@@ -34,14 +33,6 @@ public class Tab extends BasicEntity {
   
   public ObjectId getTaskId() {
     return taskId;
-  }
-  
-  public String getTabId() {
-    return tabId;
-  }
-  
-  public void setTabId(String tabId) {
-    this.tabId = tabId;
   }
   
   public String getTitle() {

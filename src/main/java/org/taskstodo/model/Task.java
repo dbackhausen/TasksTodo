@@ -83,7 +83,10 @@ public class Task extends BasicEntity {
   }
   
   public void setGoalId(ObjectId goalId) {
-    this.goalId = goalId;
+    if (!isEqual(this.goalId, goalId)) {
+      this.goalId = goalId;
+      setModified(new Date());
+    }
   }
   
   public ObjectId getParentId() {
@@ -91,7 +94,10 @@ public class Task extends BasicEntity {
   }
   
   public void setParentId(ObjectId parentId) {
-    this.parentId = parentId;
+    if (!isEqual(this.parentId, parentId)) {
+      this.parentId = parentId;
+      setModified(new Date());
+    }
   }
   
   public Date getDueDate() {
@@ -192,6 +198,8 @@ public class Task extends BasicEntity {
       setModified(new Date());
     }
   }
+  
+  // --
 
   @Override
   public String toString() {

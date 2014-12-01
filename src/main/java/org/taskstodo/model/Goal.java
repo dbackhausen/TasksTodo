@@ -25,6 +25,8 @@ public class Goal extends BasicEntity {
   private String description;
   @JsonSerialize(using=ObjectIdJsonSerializer.class)
   private ObjectId userId;
+  @JsonSerialize(using=ObjectIdJsonSerializer.class)
+  private ObjectId parentId;
   private Date dueDate = null;
   private Date completedDate = null;
   private Date reminderDate = null;
@@ -75,6 +77,17 @@ public class Goal extends BasicEntity {
   public void setUserId(ObjectId userId) {
     if (!isEqual(this.userId, userId)) {
       this.userId = userId;
+      setModified(new Date());
+    }
+  }
+  
+  public ObjectId getParentId() {
+    return parentId;
+  }
+  
+  public void setParentId(ObjectId parentId) {
+    if (!isEqual(this.parentId, parentId)) {
+      this.parentId = parentId;
       setModified(new Date());
     }
   }
@@ -183,8 +196,10 @@ public class Goal extends BasicEntity {
   @Override
   public String toString() {
     return "Goal [title=" + title + ", description=" + description
-        + ", userId=" + userId + ", urgency=" + urgency + ", priority="
-        + priority + ", level=" + level + ", position=" + position
-        + ", completed=" + completed + ", deleted=" + deleted + "]";
+        + ", userId=" + userId + ", parentId=" + parentId + ", dueDate="
+        + dueDate + ", completedDate=" + completedDate + ", reminderDate="
+        + reminderDate + ", urgency=" + urgency + ", priority=" + priority
+        + ", level=" + level + ", position=" + position + ", completed="
+        + completed + ", deleted=" + deleted + "]";
   }
 }

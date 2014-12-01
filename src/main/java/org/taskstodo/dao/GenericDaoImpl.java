@@ -63,7 +63,7 @@ public class GenericDaoImpl<T> implements GenericDao<T> {
   @Override
   public T findById(final ObjectId id) {
     if (id != null) {
-      LOGGER.debug("Looking for entity " + id.toString() + ".");
+      LOGGER.debug("Search for entity with id " + id.toString() + " and type " + genericType.getSimpleName() + ".");
       return mongoTemplate.findById(id, genericType);
     }
     

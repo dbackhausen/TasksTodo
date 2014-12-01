@@ -53,6 +53,10 @@ public abstract class BasicEntity {
       return false;
     }
     
+    if (o1 instanceof ObjectId && o2 instanceof ObjectId) {
+      return (((ObjectId) o1).toString()).equals(((ObjectId) o2).toString());
+    }
+    
     if (o1 instanceof String && o2 instanceof String) {
       return ((String) o1).equals((String) o2);
     }

@@ -7,6 +7,7 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -61,10 +62,10 @@ public class FileDAOImpl implements FileDAO {
   @Override
   public List<GridFSDBFile> list(ObjectId taskId) {
     Criteria c = Criteria.where("metadata.taskId").is(taskId);
-    c.andOperator(Criteria.where("metadata.deleted").is(false));
+//    c.andOperator(Criteria.where("metadata.deleted").is(false));
     
     Query query = Query.query(c);
-//    query.with(new Sort(Sort.Direction.ASC, "uploadDate"));
+    query.with(new Sort(Sort.Direction.ASC, "uploadDate"));
     return gridTemplate.find(query);
   }
   

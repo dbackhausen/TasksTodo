@@ -57,6 +57,7 @@ public class GoalController {
           g.setTitle(goal.getTitle());
           g.setDescription(goal.getDescription());
           g.setUserId(goal.getUserId());
+          g.setParentId(goal.getParentId());
           g.setUrgency(goal.getUrgency());
           g.setPriority(goal.getPriority());
           g.setLevel(goal.getLevel());
