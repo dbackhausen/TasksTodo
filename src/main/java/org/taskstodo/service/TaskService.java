@@ -8,6 +8,7 @@ import org.taskstodo.exception.ServiceException;
 import org.taskstodo.model.Bookmark;
 import org.taskstodo.model.HistoryEntry;
 import org.taskstodo.model.Note;
+import org.taskstodo.model.Query;
 import org.taskstodo.model.Tab;
 import org.taskstodo.model.Task;
 
@@ -285,4 +286,61 @@ public interface TaskService {
    * @param id - the identifier.
    */
   public void deleteHistoryEntry(ObjectId id);
+
+  /////////////////////////////////////////////////////////////////////////////
+  // QUERY                                                                   //
+  /////////////////////////////////////////////////////////////////////////////
+  
+  /**
+   * Adds a search query.
+   * 
+   * @param query - the search query.
+   * 
+   * @return the object id.
+   * 
+   * @throws ServiceException - Exception during entity creation.
+   */
+  public ObjectId addQuery(Query query) throws ServiceException;
+
+  /**
+   * Returns a certain query.
+   * 
+   * @param id - the id.
+   * 
+   * @return the query.
+   */
+  public Query getQuery(ObjectId id);
+
+  /**
+   * Returns a list of queries given a task id.
+   * 
+   * @param taskId - the task id.
+   * 
+   * @return the queries.
+   */
+  public List<Query> getQueriesByTask(ObjectId taskId);
+  
+  /**
+   * Returns a list of queries given a task id and search engine.
+   * 
+   * @param taskId - the task id.
+   * @param engine - the engine.
+   * 
+   * @return the queries.
+   */
+  public List<Query> getQueriesByTaskAndEngine(ObjectId taskId, String engine);
+
+  /**
+   * Deletes all queries given a certain task.
+   * 
+   * @param taskId - the task id.
+   */
+  public void deleteAllQueriesByTask(ObjectId taskId);
+  
+  /**
+   * Deletes a specific query entry.
+   * 
+   * @param id - the id.
+   */
+  public void deleteQuery(ObjectId id);
 }

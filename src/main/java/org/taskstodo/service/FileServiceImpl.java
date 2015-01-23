@@ -1,6 +1,7 @@
 package org.taskstodo.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -28,6 +29,15 @@ public class FileServiceImpl implements FileService {
   @Override
   public GridFSFile saveFile(ObjectId taskId, MultipartFile mfile) throws IOException {
     GridFSFile file = fileDAO.save(taskId, mfile);
+    return file;
+  }
+
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.FileService#saveFile(org.bson.types.ObjectId, java.io.InputStream, java.lang.String, java.lang.String)
+   */
+  @Override
+  public GridFSFile saveFile(ObjectId taskId, InputStream is, String filename, String contentType) throws IOException {
+    GridFSFile file = fileDAO.save(taskId, is, filename,  contentType);
     return file;
   }
   

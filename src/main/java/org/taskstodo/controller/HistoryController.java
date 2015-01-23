@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.taskstodo.model.HistoryEntry;
+import org.taskstodo.model.Query;
 import org.taskstodo.service.TaskService;
+import org.taskstodo.util.UrlUtils;
 
 @Controller
 @RequestMapping(value = "/history")
@@ -36,6 +38,15 @@ public class HistoryController {
     if (entry != null) {
       try {
         ObjectId id = taskService.addHistoryEntry(entry);
+        
+        Query query = UrlUtils.getQueryFromUrlString(entry.getUrl());
+        
+        if (query != null) {
+          query.setTaskId(entry.getTaskId());
+          LOGGER.info("Found search query: " + query.toString());
+          taskService.addQuery(query);
+        }
+                
         return taskService.getHistoryEntry(id);
       } catch (Exception e) {
         LOGGER.error(e.getMessage(), e);

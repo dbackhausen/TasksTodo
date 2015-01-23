@@ -35,6 +35,14 @@
   <!-- Bookmark the ext. config. file -->
   <context:property-placeholder location="classpath:application.properties" />
 
+  <bean id="appProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    <property name="locations">
+      <list>
+        <value>classpath:application.properties</value>
+      </list>
+    </property>
+  </bean>
+
   <mongo:db-factory id="mongoDbFactory" dbname="${database.name}" />
   <mongo:mapping-converter id="converter" />
 

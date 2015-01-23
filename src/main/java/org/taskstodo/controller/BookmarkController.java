@@ -55,6 +55,7 @@ public class BookmarkController {
         b.setTitle(bookmark.getTitle());
         b.setDescription(bookmark.getDescription());
         b.setThumbnail(bookmark.getThumbnail());
+        b.setContent(bookmark.getContent());
         b.setRelevance(bookmark.getRelevance());
         b.setDeleted(bookmark.isDeleted());
         taskService.updateBookmark(b);

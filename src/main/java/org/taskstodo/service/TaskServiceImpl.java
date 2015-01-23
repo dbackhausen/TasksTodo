@@ -11,14 +11,17 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.taskstodo.dao.BookmarkDAO;
+import org.taskstodo.dao.FileDAO;
 import org.taskstodo.dao.HistoryDAO;
 import org.taskstodo.dao.NoteDAO;
+import org.taskstodo.dao.QueryDAO;
 import org.taskstodo.dao.TabDAO;
 import org.taskstodo.dao.TaskDAO;
 import org.taskstodo.exception.ServiceException;
 import org.taskstodo.model.Bookmark;
 import org.taskstodo.model.HistoryEntry;
 import org.taskstodo.model.Note;
+import org.taskstodo.model.Query;
 import org.taskstodo.model.Tab;
 import org.taskstodo.model.Task;
 
@@ -26,6 +29,10 @@ import org.taskstodo.model.Task;
 public class TaskServiceImpl implements TaskService {
   /* The Logger */
   private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
+  
+  @Autowired
+  private FileDAO fileDAO;
+  
   
   /////////////////////////////////////////////////////////////////////////////
   // TASK                                                                    //
@@ -106,6 +113,15 @@ public class TaskServiceImpl implements TaskService {
       noteDAO.deleteAllByTask(id);
       // remove all task bookmarks
       bookmarkDAO.deleteAllByTask(id);
+      
+      // remove all task history
+      historyDAO.deleteAllByTask(id);
+      
+      // remove all task attachments
+      fileDAO.deleteAllByTask(id);
+      
+      // remove all task queries
+      queryDAO.deleteAllByTask(id);        
       
       if (cascade) {
         List<Task> subtasks = getCompletedTasks(id);
@@ -357,5 +373,64 @@ public class TaskServiceImpl implements TaskService {
   @Override
   public void deleteHistoryEntry(ObjectId id) {
     historyDAO.delete(id);
+  }
+  
+  /////////////////////////////////////////////////////////////////////////////
+  // QUERY                                                                   //
+  /////////////////////////////////////////////////////////////////////////////
+  
+  @Autowired
+  private QueryDAO queryDAO;
+
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#addQuery(org.taskstodo.model.Query)
+   */
+  @Override
+  public ObjectId addQuery(Query query) throws ServiceException {
+    if (query != null && query.getTaskId() != null) {
+      return queryDAO.create(query);
+    } else {
+      throw new ServiceException("Invalid object! Object is null or has no reference to parent task!");
+    }
+  }
+  
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#getQuery(org.bson.types.ObjectId)
+   */
+  @Override
+  public Query getQuery(ObjectId id) {
+    return queryDAO.findById(id);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#getQueriesByTask(org.bson.types.ObjectId)
+   */
+  @Override
+  public List<Query> getQueriesByTask(ObjectId taskId) {
+    return queryDAO.findByTask(taskId);
+  }
+
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#getQueriesByTaskAndEngine(org.bson.types.ObjectId, java.lang.String)
+   */
+  @Override
+  public List<Query> getQueriesByTaskAndEngine(ObjectId taskId, String engine) {
+    return queryDAO.findByTaskAndEngine(taskId, engine);
+  }
+
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#deleteAllQueriesByTask(org.bson.types.ObjectId)
+   */
+  @Override
+  public void deleteAllQueriesByTask(ObjectId taskId) {
+    queryDAO.deleteAllByTask(taskId);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.taskstodo.service.TaskService#deleteQuery(org.bson.types.ObjectId)
+   */
+  @Override
+  public void deleteQuery(ObjectId id) {
+    queryDAO.delete(id);
   }
 }

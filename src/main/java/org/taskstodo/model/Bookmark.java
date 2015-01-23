@@ -15,6 +15,7 @@ public class Bookmark extends BasicEntity {
   private String url;
   private String description;
   private String thumbnail;
+  private String content;
   private int relevance = 0;
   private boolean deleted;
   
@@ -77,6 +78,17 @@ public class Bookmark extends BasicEntity {
   public void setThumbnail(String thumbnail) {
     if (this.thumbnail != thumbnail) {
       this.thumbnail = thumbnail;
+      setModified(new Date());
+    }
+  }
+  
+  public String getContent() {
+    return content;
+  }
+  
+  public void setContent(String content) {
+    if (this.content != content) {
+      this.content = content;
       setModified(new Date());
     }
   }

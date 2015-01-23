@@ -1,6 +1,7 @@
 package org.taskstodo.dao;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -48,6 +49,20 @@ public class FileDAOImpl implements FileDAO {
   }
   
   /* (non-Javadoc)
+   * @see org.taskstodo.dao.FileDAO#save(org.bson.types.ObjectId, java.io.InputStream, java.lang.String, java.lang.String)
+   */
+  @Override
+  public GridFSFile save(ObjectId taskId, InputStream is, String filename, String contentType) throws IOException {
+    BasicDBObject metadata = new BasicDBObject();
+    metadata.append("taskId", taskId);
+    GridFSFile result = gridTemplate.store(is, filename, contentType, metadata);
+    
+    LOGGER.debug("File " +  result.getFilename() + " successfully saved!");
+    
+    return result;
+  }
+  
+  /* (non-Javadoc)
    * @see org.taskstodo.dao.FileDAO#load(org.bson.types.ObjectId)
    */
   @Override
@@ -65,7 +80,7 @@ public class FileDAOImpl implements FileDAO {
 //    c.andOperator(Criteria.where("metadata.deleted").is(false));
     
     Query query = Query.query(c);
-    query.with(new Sort(Sort.Direction.ASC, "uploadDate"));
+    query.with(new Sort(Sort.Direction.DESC, "uploadDate"));
     return gridTemplate.find(query);
   }
   
@@ -77,4 +92,14 @@ public class FileDAOImpl implements FileDAO {
     Query query = Query.query(Criteria.where("_id").is(id));
     gridTemplate.delete(query);
   }
+
+ /* (non-Javadoc)
+  * @see org.taskstodo.dao.FileDAO#deleteAllByTask(org.bson.types.ObjectId)
+  */
+ @Override
+ public void deleteAllByTask(ObjectId taskId) {
+   Query query = new Query();
+   query.addCriteria(Criteria.where("taskId").is(taskId));
+   gridTemplate.delete(query);
+ }
 }

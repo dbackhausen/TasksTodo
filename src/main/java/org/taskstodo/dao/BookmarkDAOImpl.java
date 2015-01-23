@@ -35,6 +35,7 @@ public class BookmarkDAOImpl extends GenericDaoImpl<Bookmark> implements Bookmar
     c.andOperator(Criteria.where("deleted").is(false));
     
     Query query = Query.query(c);
+    query.fields().exclude("content"); // exclude massive data load
     query.with(new Sort(Direction.DESC, "created"));
     List<Bookmark> bookmarks = mongoTemplate.find(query, Bookmark.class);
     

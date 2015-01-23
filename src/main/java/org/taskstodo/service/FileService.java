@@ -1,6 +1,7 @@
 package org.taskstodo.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -22,6 +23,20 @@ public interface FileService {
    * @throws IOException - Error storing file to file database.
    */
   GridFSFile saveFile(ObjectId taskId, MultipartFile mfile) throws IOException;
+  
+  /**
+   * Saves a file to the file database.
+   * 
+   * @param taskId - the identifier of the task.
+   * @param is - the input stream.
+   * @param filename - the file name.
+   * @param contentType - the content type.
+   * 
+   * @return the new file.
+   * 
+   * @throws IOException - Error storing file to file database.
+   */
+  GridFSFile saveFile(ObjectId taskId, InputStream is, String filename, String contentType) throws IOException;
   
   /**
    * Loads a file from the file database.

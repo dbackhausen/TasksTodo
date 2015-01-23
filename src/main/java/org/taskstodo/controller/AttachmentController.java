@@ -1,18 +1,28 @@
 package org.taskstodo.controller;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -37,28 +47,29 @@ public class AttachmentController {
   @Autowired
   private FileService fileService;
   
+  @Value("#{appProperties['application.host']}")
+  private String applicationHost;
+  
   // --
 
   @RequestMapping(value = "/api/create/{taskId}", method = RequestMethod.POST)
   public @ResponseBody Attachment upload(@PathVariable("taskId") ObjectId taskId, @RequestPart("file") MultipartFile file) {
-    LOGGER.info("Task ID: " + taskId.toString());
-    LOGGER.info("File type: " + file.getContentType());
-	  LOGGER.info("File size: " + file.getSize());
-	  LOGGER.info("File name: " + file.getOriginalFilename());
-      
 	  GridFSFile gf = null;
 	  
     try {
+      // Store binary file to database
       gf = fileService.saveFile(taskId, file);
     } catch (IOException e) {
       LOGGER.error(e.getMessage(), e);
     }
 	  
 	  if (gf != null) {
+	    // Create a new attachment object to describe the file
 	    Attachment attachment = new Attachment();
 	    attachment.setId((ObjectId) gf.getId());
 	    attachment.setTaskId(taskId);
 	    attachment.setFilename(gf.getFilename());
+	    attachment.setUrl(getApplicationHost() + "/attachments/download/" + gf.getId().toString());
 	    attachment.setSize(gf.getLength());
 	    attachment.setContentType(gf.getContentType());
 	    attachment.setCreated(gf.getUploadDate());
@@ -66,6 +77,65 @@ public class AttachmentController {
 	  } else {
 	    return null;
 	  }
+  }
+  
+
+  @RequestMapping(value = "/api/save", method = RequestMethod.POST)
+  public @ResponseBody Attachment save(@RequestBody JSONObject json) {
+    String sTaskId = (String) json.get("taskId");
+    String sUrl = (String) json.get("url");
+    
+    if (sTaskId != null && sUrl != null) {     
+      URL url = null;
+      URLConnection uc = null;
+      InputStream is = null;
+      DataInputStream dis = null;
+      
+      try {
+        ObjectId taskId = new ObjectId(sTaskId);
+       
+        url = new URL(sUrl);
+        uc = url.openConnection();
+
+        // Get information about the file
+        String filename = FilenameUtils.getName(url.getFile());
+        String contentType = uc.getContentType();
+        
+        // Read data from remote host
+        is = url.openStream();
+        dis = new DataInputStream(new BufferedInputStream(is));
+        
+        // Store binary file to database
+        GridFSFile gf = fileService.saveFile(taskId, dis, filename, contentType);
+        
+        if (gf != null) {
+          // Create a new attachment object to describe the file
+          Attachment attachment = new Attachment();
+          attachment.setId((ObjectId) gf.getId());
+          attachment.setTaskId(taskId);
+          attachment.setFilename(gf.getFilename());
+          attachment.setUrl(getApplicationHost() + "/attachments/download/" + gf.getId().toString());
+          attachment.setSize(gf.getLength());
+          attachment.setContentType(gf.getContentType());
+          attachment.setCreated(gf.getUploadDate());
+          return attachment;
+        } else {
+          return null;
+        }
+      } catch (MalformedURLException e) {
+        LOGGER.error(e.getMessage(), e);
+      } catch (IOException e) {
+        LOGGER.error(e.getMessage(), e);
+      } finally {
+        try {
+          is.close();
+          dis.close();
+        } catch (Exception e) {
+        }
+      }
+    }
+
+    return null;    
   }
   
   @RequestMapping(value = "/api/list/{taskId}", method = RequestMethod.GET)
@@ -80,6 +150,7 @@ public class AttachmentController {
         attachment.setId((ObjectId) file.getId());
         attachment.setTaskId(taskId);
         attachment.setFilename(file.getFilename());
+        attachment.setUrl(getApplicationHost() + "/attachments/download/" + file.getId().toString());
         attachment.setSize(file.getLength());
         attachment.setContentType(file.getContentType());
         attachment.setCreated(file.getUploadDate());
@@ -108,5 +179,13 @@ public class AttachmentController {
     } catch (IOException e) {
       LOGGER.error(e.getMessage(), e);
     }
+  }
+  
+  public String getApplicationHost() {
+    return applicationHost;
+  }
+  
+  public void setApplicationHost(String applicationHost) {
+    this.applicationHost = applicationHost;
   }
 }

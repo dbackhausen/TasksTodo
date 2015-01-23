@@ -18,7 +18,7 @@ import org.taskstodo.service.TaskServiceImpl;
 @Repository
 public class GenericDaoImpl<T> implements GenericDao<T> {
   /* The Logger */
-  private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(GenericDaoImpl.class);
 
   @Autowired
   private MongoTemplate mongoTemplate;
