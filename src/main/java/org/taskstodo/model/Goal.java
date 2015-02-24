@@ -1,9 +1,11 @@
 package org.taskstodo.model;
 
 import java.util.Date;
+import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.mongodb.morphia.annotations.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.taskstodo.util.ObjectIdJsonSerializer;
 
@@ -36,6 +38,9 @@ public class Goal extends BasicEntity {
   private int position = 1;
   private boolean completed;
   private boolean deleted;
+  
+  @Transient
+  private List<Task> tasks;
   
   // --
   
@@ -189,6 +194,16 @@ public class Goal extends BasicEntity {
       this.deleted = deleted;
       setModified(new Date());
     }
+  }
+  
+  // --
+  
+  public List<Task> getTasks() {
+    return tasks;
+  }
+  
+  public void setTasks(List<Task> tasks) {
+    this.tasks = tasks;
   }
 
   // --

@@ -1,5 +1,6 @@
 package org.taskstodo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.taskstodo.exception.GoalNotFoundException;
 import org.taskstodo.model.Goal;
+import org.taskstodo.model.Task;
 import org.taskstodo.service.GoalService;
+import org.taskstodo.service.TaskService;
 
 @Controller
 @RequestMapping(value = "/goals")
@@ -28,6 +31,9 @@ public class GoalController {
   
   @Autowired
   private GoalService goalService;
+  
+  @Autowired
+  private TaskService taskService;
 
   // --
   
@@ -91,7 +97,20 @@ public class GoalController {
   
   @RequestMapping(value = "/api/read/{goalId}", method = RequestMethod.GET)
   public @ResponseBody Goal getGoal(@PathVariable("goalId") ObjectId goalId) {
-    return goalService.getGoal(goalId);
+    Goal goal = goalService.getGoal(goalId);
+    
+    if (goal != null) {
+      List<Task> tasks = taskService.getTasks(goal.getId());
+      List<Task> t = new ArrayList<Task>();
+      
+      for (Task task : tasks) {
+        t.add(taskService.getTask(task.getId()));
+      }
+      
+      goal.setTasks(t);
+    }
+    
+    return goal;
   }
   
   @RequestMapping(value = "/api/list/{userId}", method = RequestMethod.GET)

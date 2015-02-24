@@ -67,7 +67,16 @@ public class TaskServiceImpl implements TaskService {
    * @see org.taskstodo.service.TaskService#getTask(org.bson.types.ObjectId)
    */
   public Task getTask(ObjectId id) {
-    return taskDAO.findById(id);
+    Task task = taskDAO.findById(id);
+    
+    if (task != null) {
+      task.setNotes(getNotes(task.getId()));
+      task.setBookmarks(getBookmarks(task.getId()));
+      task.setQueries(getQueriesByTask(task.getId()));
+      task.setHistory(getHistory(task.getId()));
+    }
+    
+    return task;
   }
   
   @Override

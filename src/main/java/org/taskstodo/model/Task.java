@@ -1,9 +1,11 @@
 package org.taskstodo.model;
 
 import java.util.Date;
+import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.mongodb.morphia.annotations.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.taskstodo.util.ObjectIdJsonSerializer;
 
@@ -44,6 +46,15 @@ public class Task extends BasicEntity {
   private int position = 1;
   private boolean completed;
   private boolean deleted;
+  
+  @Transient
+  private List<Note> notes;
+  @Transient
+  private List<Bookmark> bookmarks;
+  @Transient
+  private List<Query> queries;
+  @Transient
+  private List<HistoryEntry> history;
   
   // --
   
@@ -197,6 +208,40 @@ public class Task extends BasicEntity {
       this.deleted = deleted;
       setModified(new Date());
     }
+  }
+  
+  // --
+  
+  public List<Note> getNotes() {
+    return notes;
+  }
+  
+  public void setNotes(List<Note> notes) {
+    this.notes = notes;
+  }
+  
+  public List<Bookmark> getBookmarks() {
+    return bookmarks;
+  }
+  
+  public void setBookmarks(List<Bookmark> bookmarks) {
+    this.bookmarks = bookmarks;
+  }
+  
+  public List<Query> getQueries() {
+    return queries;
+  }
+  
+  public void setQueries(List<Query> queries) {
+    this.queries = queries;
+  }
+  
+  public List<HistoryEntry> getHistory() {
+    return history;
+  }
+  
+  public void setHistory(List<HistoryEntry> history) {
+    this.history = history;
   }
   
   // --

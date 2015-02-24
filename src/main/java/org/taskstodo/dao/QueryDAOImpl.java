@@ -60,6 +60,9 @@ public class QueryDAOImpl extends GenericDaoImpl<org.taskstodo.model.Query> impl
     List<org.taskstodo.model.Query> filteredQueries = new ArrayList<org.taskstodo.model.Query>();
     HashSet<String> queryStrings = new HashSet<String>();
     
+    LOGGER.debug(">>> " +  queries.size());
+    
+    
     for (org.taskstodo.model.Query q : queries) {
       if (!queryStrings.contains(q.getQueryString())) {
         filteredQueries.add(q);

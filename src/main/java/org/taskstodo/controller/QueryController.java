@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.taskstodo.exception.InvalidParameterException;
 import org.taskstodo.model.Query;
 import org.taskstodo.service.TaskService;
 
@@ -61,6 +62,8 @@ public class QueryController {
     
     if (taskId != null) {
       queries = taskService.getQueriesByTask(taskId);
+    } else {
+      throw new InvalidParameterException();
     }
     
     return queries;
@@ -72,6 +75,8 @@ public class QueryController {
     
     if (taskId != null && engine != null) {
       queries = taskService.getQueriesByTaskAndEngine(taskId, engine);
+    } else {
+      throw new InvalidParameterException();
     }
     
     return queries;
